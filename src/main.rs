@@ -8,6 +8,7 @@ mod world;
 mod player;
 mod camera;
 mod types;
+mod renderable;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();

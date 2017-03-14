@@ -14,7 +14,7 @@ use world::World;
 use player::Player;
 use camera::Camera;
 
-use types::{Point, Size, KeyAction};
+use types::{TilePos, Point, Size, KeyAction};
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
@@ -33,14 +33,16 @@ pub struct Game<'a> {
 
 impl<'a> Game<'a> {
     pub fn new(e: SdlEvents, r: Renderer) -> Game {
-        let mut player = Player::new();
-        player.set_pos(Point::new(50.0, 50.0));
-        let camera = Camera::new(player.get_pos(),
-                                 Size::new(800.0, 600.0),
-                                 CAMERA_SPEED);
+        let world = World::new();
+        let start_pos = world.from_tile_pos(TilePos::new(3, 3));
+        let mut player = Player::new(start_pos);
+        let camera = Camera::new(
+            player.get_r().pos,
+            Size::new(800.0, 600.0),
+            CAMERA_SPEED);
 
         Game {
-            world: World::new(),
+            world: world,
             player: player,
             camera: camera,
             running: false,
@@ -114,12 +116,15 @@ impl<'a> Game<'a> {
         self.try_move_player(move_intention, dt);
 
         self.world.update(dt);
-        self.player.update(dt);
-        let player_tile_pos = self.world.to_tile_pos(self.player.get_pos());
+
+        let player_pos = self.player.get_r().pos;
+        let player_tile_pos = self.world.to_tile_pos(player_pos);
         self.world.set_highlighted(player_tile_pos);
 
-        self.camera.set_target(self.player.get_pos());
+        self.camera.set_target(player_pos);
         self.camera.update(dt);
+
+        self.player.update(dt);
     }
 
     pub fn draw(&mut self) {
@@ -127,7 +132,7 @@ impl<'a> Game<'a> {
         self.renderer.clear();
 
         self.world.draw(&mut self.renderer, &self.camera);
-        self.player.draw(&mut self.renderer, &self.camera);
+        self.player.get_r().draw(&mut self.renderer, &self.camera);
 
         self.renderer.present();
     }

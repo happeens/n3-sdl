@@ -71,6 +71,13 @@ impl World {
         TilePos::from_point(tile_pos)
     }
 
+    pub fn from_tile_pos(&self, tile_pos: TilePos) -> Point {
+        let tile_size = Size::new(TILE_WIDTH as f64, TILE_HEIGHT as f64);
+        let pos_x = tile_pos.x() as f64 * tile_size.w() + tile_size.w() / 2.0;
+        let pos_y = tile_pos.y() as f64 * tile_size.h() + tile_size.h() / 2.0;
+        Point::new(pos_x, pos_y)
+    }
+
     pub fn check_pos_collides(&self, pos: Point) -> bool {
         let tile_pos = self.to_tile_pos(pos);
         self.get_field(tile_pos).meta == 1

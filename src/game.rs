@@ -33,7 +33,8 @@ pub struct Game<'a> {
 
 impl<'a> Game<'a> {
     pub fn new(e: SdlEvents, r: Renderer) -> Game {
-        let player = Player::new();
+        let mut player = Player::new();
+        player.set_pos(Point::new(50.0, 50.0));
         let camera = Camera::new(player.get_pos(),
                                  Size::new(800.0, 600.0),
                                  CAMERA_SPEED);
@@ -110,10 +111,12 @@ impl<'a> Game<'a> {
             move_intention.mult_diag();
         }
 
-        self.try_move_player(move_intention);
+        self.try_move_player(move_intention, dt);
 
         self.world.update(dt);
         self.player.update(dt);
+        let player_tile_pos = self.world.to_tile_pos(self.player.get_pos());
+        self.world.set_highlighted(player_tile_pos);
 
         self.camera.set_target(self.player.get_pos());
         self.camera.update(dt);
@@ -129,7 +132,25 @@ impl<'a> Game<'a> {
         self.renderer.present();
     }
 
-    pub fn try_move_player(&mut self, v: Point) {
+    pub fn try_move_player(&mut self, v: Point, dt: f64) {
+        let mut v = v;
+
+        if self.world.check_pos_collides(self.player.next_pos(dt, v)) {
+            let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
+            let new_y = self.player.next_pos(dt, Point::new(0.0, v.y()));
+
+            if self.world.check_pos_collides(new_x) {
+                v.set_x(0.0);
+            }
+
+            if self.world.check_pos_collides(new_y) {
+                v.set_y(0.0);
+            }
+
+            v.mult_diag();
+            self.player.set_vel(v);
+        }
+
         self.player.set_vel(v);
     }
 }

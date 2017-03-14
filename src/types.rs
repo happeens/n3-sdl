@@ -1,6 +1,6 @@
 use sdl2::rect::Rect as SdlRect;
 
-use std::ops::{Add, Sub, Mul};
+use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(PartialEq, Eq, Debug, Hash)]
 pub enum KeyAction {
@@ -22,9 +22,36 @@ pub struct Size {
     h: f64,
 }
 
+#[derive(Debug, Copy, Clone)]
 pub struct TilePos {
     x: u32,
     y: u32,
+}
+
+impl TilePos {
+    pub fn new(x: u32, y: u32) -> TilePos {
+        TilePos { x: x, y: y }
+    }
+
+    pub fn from_point(p: Point) -> TilePos {
+        TilePos::new(p.x() as u32, p.y() as u32)
+    }
+
+    pub fn x(&self) -> u32 {
+        self.x
+    }
+
+    pub fn y(&self) -> u32 {
+        self.y
+    }
+}
+
+impl Sub<TilePos> for TilePos {
+    type Output = TilePos;
+
+    fn sub(self, rhs: TilePos) -> TilePos {
+        TilePos::new(self.x - rhs.x(), self.y - rhs.y())
+    }
 }
 
 impl Point {
@@ -98,6 +125,14 @@ impl Mul<f64> for Point {
     }
 }
 
+impl Div<Size> for Point {
+    type Output = Point;
+
+    fn div(self, rhs: Size) -> Point {
+        Point::new(self.x / rhs.w(), self.y / rhs.h())
+    }
+}
+
 impl Size {
     pub fn new(w: f64, h: f64) -> Size {
         Size { w: w, h: h }
@@ -105,5 +140,13 @@ impl Size {
 
     pub fn to_point(&self) -> Point {
         Point::new(self.w, self.h)
+    }
+
+    pub fn w(&self) -> f64 {
+        self.w
+    }
+
+    pub fn h(&self) -> f64 {
+        self.h
     }
 }

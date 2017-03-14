@@ -4,7 +4,7 @@ use sdl2::render::Renderer;
 use types::{Point, Size};
 use camera::Camera;
 
-const PLAYER_SPEED: f64 = 150.0;
+const PLAYER_SPEED: f64 = 130.0;
 
 pub struct Player {
     pos: Point,
@@ -26,7 +26,8 @@ impl Player {
     }
 
     pub fn update(&mut self, dt: f64) {
-        self.pos = self.pos + (self.vel * dt * PLAYER_SPEED);
+        let vel = self.vel;
+        self.pos = self.next_pos(dt, vel);
     }
 
     pub fn draw(&self, r: &mut Renderer, c: &Camera) {
@@ -35,8 +36,20 @@ impl Player {
         let _ = r.fill_rect(pos.to_sdl_rect(self.size));
     }
 
+    pub fn next_pos(&mut self, dt: f64, vel: Point) -> Point {
+        self.pos + (vel * dt * PLAYER_SPEED)
+    }
+
+    pub fn get_vel(&self) -> Point {
+        self.vel
+    }
+
     pub fn set_vel(&mut self, vel: Point) {
         self.vel = vel;
+    }
+
+    pub fn set_pos(&mut self, pos: Point) {
+        self.pos = pos;
     }
 
     pub fn get_pos(&self) -> Point {

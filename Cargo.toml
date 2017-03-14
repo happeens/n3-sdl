@@ -1,0 +1,8 @@
+[package]
+name = "n3-sdl"
+version = "0.1.0"
+authors = ["Hilmar Wiegand <hilmar.wiegand@flameshome.net>"]
+
+[dependencies]
+time = "^0.1.36"
+sdl2 = "^0.29.0"

@@ -10,6 +10,7 @@ use sdl2::rect::Rect;
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
 
+use sprite_cache::SpriteCache;
 use world::World;
 use player::Player;
 use camera::Camera;
@@ -28,6 +29,7 @@ pub struct Game<'a> {
     running: bool,
     events: SdlEvents,
     renderer: Renderer<'a>,
+    sprite_cache: SpriteCache,
     held_keys: HashSet<KeyAction>,
 }
 
@@ -41,6 +43,8 @@ impl<'a> Game<'a> {
             Size::new(800.0, 600.0),
             CAMERA_SPEED);
 
+        let mut sprite_cache = SpriteCache::new();
+
         Game {
             world: world,
             player: player,
@@ -48,11 +52,14 @@ impl<'a> Game<'a> {
             running: false,
             events: e,
             renderer: r,
+            sprite_cache: sprite_cache,
             held_keys: HashSet::new(),
         }
     }
 
     pub fn run(&mut self) {
+        self.sprite_cache.load_sheet("assets/tileset.png", &mut self.renderer);
+
         self.running = true;
         let mut current_time = PreciseTime::now();
         let step = Duration::nanoseconds(STEP_NS.floor() as i64);
@@ -94,6 +101,10 @@ impl<'a> Game<'a> {
                     Some(D) => { self.held_keys.remove(&KeyAction::Right); },
                     _ => {}
                 },
+                MouseMotion { x, y, .. } => {
+                    let world_pos = self.world.from_screen_pos(x, y, &self.camera);
+                    self.world.set_highlighted(world_pos);
+                }
                 _ => {}
             }
         }
@@ -118,8 +129,6 @@ impl<'a> Game<'a> {
         self.world.update(dt);
 
         let player_pos = self.player.get_r().pos;
-        let player_tile_pos = self.world.to_tile_pos(player_pos);
-        self.world.set_highlighted(player_tile_pos);
 
         self.camera.set_target(player_pos);
         self.camera.update(dt);
@@ -131,7 +140,7 @@ impl<'a> Game<'a> {
         self.renderer.set_draw_color(Color::RGB(0, 0, 0));
         self.renderer.clear();
 
-        self.world.draw(&mut self.renderer, &self.camera);
+        self.world.draw(&mut self.renderer, &mut self.sprite_cache, &self.camera);
         self.player.get_r().draw(&mut self.renderer, &self.camera);
 
         self.renderer.present();

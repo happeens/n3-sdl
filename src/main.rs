@@ -1,18 +1,24 @@
 extern crate sdl2;
 extern crate time;
 
+use sdl2::image::INIT_PNG;
+
+mod types;
 mod game;
 use game::Game;
 
-mod world;
+mod sprite;
+mod sprite_cache;
+mod renderable;
+
 mod player;
 mod camera;
-mod types;
-mod renderable;
+mod world;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video = sdl_context.video().unwrap();
+    let _image_context = sdl2::image::init(INIT_PNG).unwrap();
 
     let window = video.window("n3", 800, 600)
         .position_centered()

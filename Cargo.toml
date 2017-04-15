@@ -5,6 +5,11 @@ authors = ["Hilmar Wiegand <hilmar.wiegand@flameshome.net>"]
 
 [dependencies]
 time = "^0.1.36"
+serde = "^0.9"
+serde_derive = "^0.9"
+serde_json = "^0.9"
+base64 = "^0.4.1"
+byteorder = "^1.0.0"
 
 [dependencies.sdl2]
 version = "^0.29.0"

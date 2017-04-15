@@ -4,6 +4,7 @@ use sdl2::render::Renderer;
 use camera::Camera;
 use types::{Point, Size, TilePos};
 use sprite_cache::SpriteCache;
+use tilemap::Tilemap;
 
 const TILE_WIDTH: u32 = 40;
 const TILE_HEIGHT: u32 = 40;
@@ -15,12 +16,14 @@ pub struct Tile {
 }
 
 pub struct World {
-    fields: Vec<Vec<Tile>>,
+    tilemap: Tilemap,
     highlighted: TilePos,
 }
 
 impl World {
-    pub fn new() -> World {
+    pub fn new(mut r: &mut Renderer) -> World {
+        let tilemap = Tilemap::new(&mut r);
+
         let mut fields = Vec::new();
         for y in 0..10 {
             let mut row = Vec::new();
@@ -35,7 +38,7 @@ impl World {
         }
 
         World {
-            fields: fields,
+            tilemap: tilemap,
             highlighted: TilePos::new(0, 0),
         }
     }
@@ -44,26 +47,27 @@ impl World {
     }
 
     pub fn draw(&self, mut r: &mut Renderer, s: &mut SpriteCache, c: &Camera) {
-        let grass_tile = s.get_sprite("grass").unwrap();
-        let tile_size = Size::new(TILE_WIDTH as f64, TILE_HEIGHT as f64);
+        self.tilemap.draw(r);
+        // let grass_tile = s.get_sprite("grass").unwrap();
+        // let tile_size = Size::new(TILE_WIDTH as f64, TILE_HEIGHT as f64);
 
-        for (y, row) in self.fields.iter().enumerate() {
-            for (x, field) in row.iter().enumerate() {
-                let field_x = x as u32 * TILE_WIDTH;
-                let field_y = y as u32 * TILE_HEIGHT;
-                let field_pos = Point::new(field_x as f64, field_y as f64) - c.get_pos();
+        // for (y, row) in self.fields.iter().enumerate() {
+        //     for (x, field) in row.iter().enumerate() {
+        //         let field_x = x as u32 * TILE_WIDTH;
+        //         let field_y = y as u32 * TILE_HEIGHT;
+        //         let field_pos = Point::new(field_x as f64, field_y as f64) - c.get_pos();
 
-                s.draw_sprite(&grass_tile, field_pos.to_sdl_rect(tile_size), &mut r);
-                if x == self.highlighted.x() as usize && y == self.highlighted.y() as usize {
-                    r.set_draw_color(Color::RGB(255, 255, 0));
-                    let _ = r.fill_rect(field_pos.to_sdl_rect(tile_size));
-                }
+        //         s.draw_sprite(&grass_tile, field_pos.to_sdl_rect(tile_size), &mut r);
+        //         if x == self.highlighted.x() as usize && y == self.highlighted.y() as usize {
+        //             r.set_draw_color(Color::RGB(255, 255, 0));
+        //             let _ = r.fill_rect(field_pos.to_sdl_rect(tile_size));
+        //         }
 
-                // draw bounds
-                // r.set_draw_color(Color::RGB(0, 0, 0));
-                // let _ = r.draw_rect(field_pos.to_sdl_rect(tile_size));
-            }
-        }
+        //         // draw bounds
+        //         // r.set_draw_color(Color::RGB(0, 0, 0));
+        //         // let _ = r.draw_rect(field_pos.to_sdl_rect(tile_size));
+        //     }
+        // }
     }
 
     pub fn to_tile_pos(&self, pos: Point) -> TilePos {
@@ -86,12 +90,7 @@ impl World {
     }
 
     pub fn check_pos_collides(&self, pos: Point) -> bool {
-        let tile_pos = self.to_tile_pos(pos);
-        self.get_field(tile_pos).meta == 1
-    }
-
-    pub fn get_field(&self, pos: TilePos) -> Tile {
-        self.fields[pos.x() as usize][pos.y() as usize]
+        false
     }
 
     pub fn set_highlighted(&mut self, pos: TilePos) {

@@ -1,6 +1,12 @@
 extern crate sdl2;
 extern crate time;
 
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
+extern crate base64;
+extern crate byteorder;
+
 use sdl2::image::INIT_PNG;
 
 mod types;
@@ -14,6 +20,7 @@ mod renderable;
 mod player;
 mod camera;
 mod world;
+mod tilemap;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();

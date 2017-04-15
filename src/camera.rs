@@ -1,6 +1,6 @@
 use types::{Point, Size};
 
-const CLAMP_TOLERANCE: f64 = 0.3;
+const CLAMP_TOLERANCE: f64 = 0.1;
 
 pub struct Camera {
     pos: Point,

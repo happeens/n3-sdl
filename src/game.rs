@@ -34,8 +34,8 @@ pub struct Game<'a> {
 }
 
 impl<'a> Game<'a> {
-    pub fn new(e: SdlEvents, r: Renderer) -> Game {
-        let world = World::new();
+    pub fn new(e: SdlEvents, mut r: Renderer) -> Game {
+        let world = World::new(&mut r);
         let start_pos = world.from_tile_pos(TilePos::new(3, 3));
         let mut player = Player::new(start_pos);
         let camera = Camera::new(

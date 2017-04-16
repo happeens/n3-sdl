@@ -1,6 +1,7 @@
 use time::{Duration, PreciseTime};
 use std::collections::HashSet;
 use std::cmp;
+use std::thread::sleep;
 
 use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer;
@@ -79,6 +80,11 @@ impl<'a> Game<'a> {
             }
 
             self.draw();
+            let render_time = current_time.to(PreciseTime::now());
+            let difference = step - render_time;
+            if difference > Duration::zero() {
+                sleep(difference.to_std().unwrap());
+            }
         }
     }
 

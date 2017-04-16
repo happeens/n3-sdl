@@ -1,7 +1,5 @@
 use types::{Point, Size};
 
-const CLAMP_TOLERANCE: f64 = 0.1;
-
 pub struct Camera {
     pos: Point,
     target: Point,
@@ -31,20 +29,6 @@ impl Camera {
         let target = self.target - self.screen.to_point() * 0.5;
         let distance = target - self.pos;
         let next_pos = self.pos + distance * self.speed * dt;
-        self.pos = Camera::clamp_point(next_pos, target, CLAMP_TOLERANCE);
-    }
-
-    fn clamp_point(p: Point, clamp_to: Point, tolerance: f64) -> Point {
-        let mut result = p;
-
-        if (result.x() - clamp_to.x()).abs() < tolerance {
-            result.set_x(clamp_to.x());
-        }
-
-        if (result.y() - clamp_to.y()).abs() < tolerance {
-            result.set_y(clamp_to.y());
-        }
-
-        result
+        self.pos = next_pos;
     }
 }

@@ -47,27 +47,7 @@ impl World {
     }
 
     pub fn draw(&self, mut r: &mut Renderer, s: &mut SpriteCache, c: &Camera) {
-        self.tilemap.draw(r);
-        // let grass_tile = s.get_sprite("grass").unwrap();
-        // let tile_size = Size::new(TILE_WIDTH as f64, TILE_HEIGHT as f64);
-
-        // for (y, row) in self.fields.iter().enumerate() {
-        //     for (x, field) in row.iter().enumerate() {
-        //         let field_x = x as u32 * TILE_WIDTH;
-        //         let field_y = y as u32 * TILE_HEIGHT;
-        //         let field_pos = Point::new(field_x as f64, field_y as f64) - c.get_pos();
-
-        //         s.draw_sprite(&grass_tile, field_pos.to_sdl_rect(tile_size), &mut r);
-        //         if x == self.highlighted.x() as usize && y == self.highlighted.y() as usize {
-        //             r.set_draw_color(Color::RGB(255, 255, 0));
-        //             let _ = r.fill_rect(field_pos.to_sdl_rect(tile_size));
-        //         }
-
-        //         // draw bounds
-        //         // r.set_draw_color(Color::RGB(0, 0, 0));
-        //         // let _ = r.draw_rect(field_pos.to_sdl_rect(tile_size));
-        //     }
-        // }
+        self.tilemap.draw(r, c);
     }
 
     pub fn to_tile_pos(&self, pos: Point) -> TilePos {

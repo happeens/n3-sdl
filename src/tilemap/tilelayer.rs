@@ -25,7 +25,7 @@ pub struct Tilelayer {
     opacity: f64,
     visible: bool,
     tilesize: Size,
-    tiles: Vec<Option<Tile>>,
+    tiles: Vec<Tile>,
 }
 
 impl Tilelayer {
@@ -57,7 +57,12 @@ impl Tilelayer {
                 let pos = Point::new(x as f64 * tilesize.w(),
                                      y as f64 * tilesize.h());
 
-                tiles.push(Tile::from_gid(fields[counter], &tilesets, pos, tilesize.clone()));
+                if let Some(tile) = Tile::from_gid(fields[counter],
+                                                   &tilesets,
+                                                   pos,
+                                                   tilesize.clone()) {
+                    tiles.push(tile);
+                }
                 counter += 1;
             }
         }
@@ -74,14 +79,7 @@ impl Tilelayer {
 
     pub fn draw(&self, mut r: &mut Renderer, c: &Camera) {
         for tile in &self.tiles {
-            if let &Some(ref t) = tile {
-                t.draw(r, c);
-            }
+            tile.draw(r, c);
         }
-        // if let Some(ref tile) = self.data[counter] {
-        //     let _ = r.copy(&mut tile.get_tex(),
-        //            Some(tile.get_src().to_sdl_rect(tile.get_size())),
-        //            Some(dest.to_sdl_rect(self.tilesize)));
-        // }
     }
 }

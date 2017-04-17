@@ -1,5 +1,3 @@
-extern crate serde_json;
-
 mod tilelayer;
 mod tileset;
 mod tile;
@@ -51,7 +49,7 @@ impl Tilemap {
         let mut content = String::new();
         let _ = file.read_to_string(&mut content);
 
-        let data: TilemapData = serde_json::from_str(&content).unwrap();
+        let data: TilemapData = super::serde_json::from_str(&content).unwrap();
         let tilesize = Size::new(data.tilewidth, data.tileheight);
 
         let mut tilesets = Vec::new();

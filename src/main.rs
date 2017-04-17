@@ -4,6 +4,8 @@ extern crate time;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
+extern crate serde_json;
+
 extern crate base64;
 extern crate byteorder;
 
@@ -14,7 +16,6 @@ mod game;
 use game::Game;
 
 mod sprite;
-mod sprite_cache;
 mod renderable;
 
 mod player;

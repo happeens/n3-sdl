@@ -11,7 +11,7 @@ use sdl2::rect::Rect;
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
 
-use sprite_cache::SpriteCache;
+use sprite::spritecache::SpriteCache;
 use world::World;
 use player::Player;
 use camera::Camera;
@@ -37,7 +37,7 @@ pub struct Game<'a> {
 impl<'a> Game<'a> {
     pub fn new(e: SdlEvents, mut r: Renderer) -> Game {
         let world = World::new(&mut r);
-        let start_pos = world.from_tile_pos(TilePos::new(3, 3));
+        let start_pos = Point::new(0.0, 0.0);
         let mut player = Player::new(start_pos);
         let camera = Camera::new(
             player.get_r().pos,
@@ -59,8 +59,6 @@ impl<'a> Game<'a> {
     }
 
     pub fn run(&mut self) {
-        self.sprite_cache.load_sheet("assets/tileset.png", &mut self.renderer);
-
         self.running = true;
         let mut current_time = PreciseTime::now();
         let step = Duration::nanoseconds(STEP_NS.floor() as i64);
@@ -70,6 +68,7 @@ impl<'a> Game<'a> {
             let mut frame_time = current_time.to(new_time);
             current_time = new_time;
 
+            // do an update for every frame we rendered
             while frame_time > Duration::zero() {
                 let dt = cmp::min(frame_time, step);
                 frame_time = frame_time - dt;
@@ -80,6 +79,8 @@ impl<'a> Game<'a> {
             }
 
             self.draw();
+
+            // limit to 60 fps
             let render_time = current_time.to(PreciseTime::now());
             let difference = step - render_time;
             if difference > Duration::zero() {
@@ -107,10 +108,6 @@ impl<'a> Game<'a> {
                     Some(D) => { self.held_keys.remove(&KeyAction::Right); },
                     _ => {}
                 },
-                MouseMotion { x, y, .. } => {
-                    let world_pos = self.world.from_screen_pos(x, y, &self.camera);
-                    self.world.set_highlighted(world_pos);
-                }
                 _ => {}
             }
         }
@@ -146,7 +143,7 @@ impl<'a> Game<'a> {
         self.renderer.set_draw_color(Color::RGB(0, 0, 0));
         self.renderer.clear();
 
-        self.world.draw(&mut self.renderer, &mut self.sprite_cache, &self.camera);
+        self.world.draw(&mut self.renderer, &self.camera);
         self.player.get_r().draw(&mut self.renderer, &self.camera);
 
         self.renderer.present();
@@ -155,22 +152,11 @@ impl<'a> Game<'a> {
     pub fn try_move_player(&mut self, v: Point, dt: f64) {
         let mut v = v;
 
-        if self.world.check_pos_collides(self.player.next_pos(dt, v)) {
-            let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
-            let new_y = self.player.next_pos(dt, Point::new(0.0, v.y()));
-
-            if self.world.check_pos_collides(new_x) {
-                v.set_x(0.0);
-            }
-
-            if self.world.check_pos_collides(new_y) {
-                v.set_y(0.0);
-            }
-
-            v.mult_diag();
-            self.player.set_vel(v);
-        }
-
+        // finding next player position for collision
+        // let next_pos = self.player.next_pos(dt, v);
+        // let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
+        // let new_y = self.player.next_pos(dt, Point::new(0.0, v.y()));
+        v.mult_diag();
         self.player.set_vel(v);
     }
 }

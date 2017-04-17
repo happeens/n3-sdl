@@ -1,19 +1,17 @@
 use time::{Duration, PreciseTime};
-use std::collections::HashSet;
 use std::cmp;
 use std::thread::sleep;
 
 use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer;
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
 
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
 
 use sprite::spritecache::SpriteCache;
 use world::World;
-use player::Player;
+use player::{Player, Direction};
 use camera::Camera;
 
 use types::{TilePos, Point, Size, KeyAction};
@@ -31,7 +29,7 @@ pub struct Game<'a> {
     events: SdlEvents,
     renderer: Renderer<'a>,
     sprite_cache: SpriteCache,
-    held_keys: HashSet<KeyAction>,
+    held_keys: Vec<KeyAction>,
 }
 
 impl<'a> Game<'a> {
@@ -42,8 +40,7 @@ impl<'a> Game<'a> {
         let world = World::new(&mut r);
         let start_pos = Point::new(0.0, 0.0);
 
-        let player_sprite = sc.get_sprite("player-0-1").unwrap();
-        let mut player = Player::new(start_pos, player_sprite);
+        let mut player = Player::new(start_pos, &sc);
         let camera = Camera::new(
             player.get_pos(),
             Size::new(800.0, 600.0),
@@ -58,7 +55,7 @@ impl<'a> Game<'a> {
             events: e,
             renderer: r,
             sprite_cache: sc,
-            held_keys: HashSet::new(),
+            held_keys: Vec::new(),
         }
     }
 
@@ -97,19 +94,23 @@ impl<'a> Game<'a> {
         for event in self.events.poll_iter() {
             match event {
                 Quit { .. } => self.running = false,
-                KeyDown { keycode, .. } => match keycode {
-                    Some(Escape) => self.running = false,
-                    Some(W) => { self.held_keys.insert(KeyAction::Up); },
-                    Some(A) => { self.held_keys.insert(KeyAction::Left); },
-                    Some(S) => { self.held_keys.insert(KeyAction::Down); },
-                    Some(D) => { self.held_keys.insert(KeyAction::Right); },
-                    _ => {},
+                KeyDown { keycode, repeat, .. } => {
+                    if repeat { continue; }
+
+                    match keycode {
+                        Some(Escape) => self.running = false,
+                        Some(W) => self.held_keys.push(KeyAction::Up),
+                        Some(A) => self.held_keys.push(KeyAction::Left),
+                        Some(S) => self.held_keys.push(KeyAction::Down),
+                        Some(D) => self.held_keys.push(KeyAction::Right),
+                        _ => {},
+                    }
                 },
                 KeyUp { keycode, .. } => match keycode {
-                    Some(W) => { self.held_keys.remove(&KeyAction::Up); },
-                    Some(A) => { self.held_keys.remove(&KeyAction::Left); },
-                    Some(S) => { self.held_keys.remove(&KeyAction::Down); },
-                    Some(D) => { self.held_keys.remove(&KeyAction::Right); },
+                    Some(W) => self.held_keys.retain(|&x| x != KeyAction::Up),
+                    Some(A) => self.held_keys.retain(|&x| x != KeyAction::Left),
+                    Some(S) => self.held_keys.retain(|&x| x != KeyAction::Down),
+                    Some(D) => self.held_keys.retain(|&x| x != KeyAction::Right),
                     _ => {}
                 },
                 _ => {}
@@ -125,6 +126,14 @@ impl<'a> Game<'a> {
                 &KeyAction::Left => move_intention.add_x(-1.0),
                 &KeyAction::Right => move_intention.add_x(1.0),
             }
+        }
+
+        match self.held_keys.last() {
+            Some(&KeyAction::Up) => self.player.set_facing(Direction::Up),
+            Some(&KeyAction::Down) => self.player.set_facing(Direction::Down),
+            Some(&KeyAction::Left) => self.player.set_facing(Direction::Left),
+            Some(&KeyAction::Right) => self.player.set_facing(Direction::Right),
+            _ => {}
         }
 
         if move_intention.is_diag() {

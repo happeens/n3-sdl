@@ -2,7 +2,7 @@ use sdl2::rect::Rect as SdlRect;
 
 use std::ops::{Add, Sub, Mul, Div};
 
-#[derive(PartialEq, Eq, Debug, Hash)]
+#[derive(PartialEq, Eq, Debug, Hash, Copy, Clone)]
 pub enum KeyAction {
     Up,
     Down,

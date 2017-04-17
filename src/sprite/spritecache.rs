@@ -18,7 +18,7 @@ pub struct SpriteCache {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct SpritesheetData {
+struct SpritesheetData {
     name: String,
     size: SizeData,
     o_size: SizeData,
@@ -27,13 +27,13 @@ pub struct SpritesheetData {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct PointData {
+struct PointData {
     x: f64,
     y: f64
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct SizeData {
+struct SizeData {
     width: f64,
     height: f64
 }
@@ -48,7 +48,6 @@ impl SpriteCache {
     }
 
     pub fn load_sheet(&mut self, name: &str, r: &mut Renderer) {
-        println!("loading sheet: {}", name);
         let mut path = String::from("assets/");
         path.push_str(name);
 
@@ -69,9 +68,7 @@ impl SpriteCache {
         let tex = Rc::new(RefCell::new(tex));
 
         for sd in &data {
-            println!("Found sprite: {}", sd.name);
             let sprite = Sprite::new(&sd.name,
-                                     Point::new(0.0, 0.0),
                                      Size::new(sd.size.width, sd.size.height),
                                      Point::new(sd.pos.x, sd.pos.y),
                                      Size::new(sd.size.width, sd.size.height),

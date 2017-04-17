@@ -28,7 +28,8 @@ impl Camera {
     pub fn update(&mut self, dt: f64) {
         let target = self.target - self.screen.to_point() * 0.5;
         let distance = target - self.pos;
-        let next_pos = self.pos + distance * self.speed * dt;
+        let mut next_pos = self.pos + distance * self.speed * dt;
+        next_pos.round();
         self.pos = next_pos;
     }
 }

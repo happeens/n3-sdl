@@ -99,6 +99,11 @@ impl Point {
         self.x *= mult;
         self.y *= mult;
     }
+
+    pub fn round(&mut self) {
+        self.x = self.x.round();
+        self.y = self.y.round();
+    }
 }
 
 impl Add<Point> for Point {

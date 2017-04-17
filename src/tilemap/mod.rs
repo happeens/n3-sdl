@@ -10,9 +10,8 @@ use std::rc::Rc;
 
 use std::fs::File;
 use std::path::Path;
-use std::collections::HashMap;
-
 use std::io::prelude::*;
+use std::collections::HashMap;
 
 use types::{Size, Point};
 use camera::Camera;

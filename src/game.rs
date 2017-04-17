@@ -36,15 +36,19 @@ pub struct Game<'a> {
 
 impl<'a> Game<'a> {
     pub fn new(e: SdlEvents, mut r: Renderer) -> Game {
+        let mut sc = SpriteCache::new();
+        sc.load_sheet("test", &mut r);
+
         let world = World::new(&mut r);
         let start_pos = Point::new(0.0, 0.0);
-        let mut player = Player::new(start_pos);
+
+        let player_sprite = sc.get_sprite("player-0-1").unwrap();
+        let mut player = Player::new(start_pos, player_sprite);
         let camera = Camera::new(
-            player.get_r().pos,
+            player.get_pos(),
             Size::new(800.0, 600.0),
             CAMERA_SPEED);
 
-        let mut sprite_cache = SpriteCache::new();
 
         Game {
             world: world,
@@ -53,7 +57,7 @@ impl<'a> Game<'a> {
             running: false,
             events: e,
             renderer: r,
-            sprite_cache: sprite_cache,
+            sprite_cache: sc,
             held_keys: HashSet::new(),
         }
     }
@@ -131,7 +135,7 @@ impl<'a> Game<'a> {
 
         self.world.update(dt);
 
-        let player_pos = self.player.get_r().pos;
+        let player_pos = self.player.get_pos();
 
         self.camera.set_target(player_pos);
         self.camera.update(dt);
@@ -144,7 +148,7 @@ impl<'a> Game<'a> {
         self.renderer.clear();
 
         self.world.draw(&mut self.renderer, &self.camera);
-        self.player.get_r().draw(&mut self.renderer, &self.camera);
+        self.player.draw(&mut self.renderer, &self.camera);
 
         self.renderer.present();
     }

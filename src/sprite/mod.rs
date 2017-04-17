@@ -3,9 +3,10 @@ pub mod spritecache;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use sdl2::render::Texture;
+use sdl2::render::{Texture, Renderer};
 
 use types::{Point, Size};
+use camera::Camera;
 
 #[derive(Clone)]
 pub struct Sprite {
@@ -27,5 +28,20 @@ impl Sprite {
             src_size: src_size,
             tex: tex
         }
+    }
+
+    pub fn draw(&self, r: &mut Renderer, c: &Camera) {
+        let dest = self.pos - c.get_pos();
+        let _ = r.copy(&mut self.tex.borrow_mut(),
+                       Some(self.src.to_sdl_rect(self.src_size)),
+                       Some(dest.to_sdl_rect(self.size)));
+    }
+
+    pub fn get_pos(&self) -> Point {
+        self.pos
+    }
+
+    pub fn set_pos(&mut self, pos: Point) {
+        self.pos = pos;
     }
 }

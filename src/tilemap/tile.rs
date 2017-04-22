@@ -35,9 +35,9 @@ impl Tile {
             let cols = tileset.get_columns();
 
             let offset = gid % cols;
-            x = offset as f64 * size.w();
+            x = offset as f64 * size.w;
             let row: u32 = gid / cols;
-            y = row as f64 * size.h();
+            y = row as f64 * size.h;
         }
 
         let src = Point::new(x, y);

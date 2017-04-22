@@ -12,20 +12,20 @@ pub enum KeyAction {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
-    x: f64,
-    y: f64,
+    pub x: f64,
+    pub y: f64,
 }
 
 #[derive(Copy, Clone, Debug)]
 pub struct Size {
-    w: f64,
-    h: f64,
+    pub w: f64,
+    pub h: f64,
 }
 
 #[derive(Debug, Copy, Clone)]
 pub struct TilePos {
-    x: u32,
-    y: u32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl TilePos {
@@ -34,7 +34,7 @@ impl TilePos {
     }
 
     pub fn from_point(p: Point) -> TilePos {
-        TilePos::new(p.x() as u32, p.y() as u32)
+        TilePos::new(p.x as u32, p.y as u32)
     }
 
     pub fn x(&self) -> u32 {
@@ -50,7 +50,7 @@ impl Sub<TilePos> for TilePos {
     type Output = TilePos;
 
     fn sub(self, rhs: TilePos) -> TilePos {
-        TilePos::new(self.x - rhs.x(), self.y - rhs.y())
+        TilePos::new(self.x - rhs.x, self.y - rhs.y)
     }
 }
 
@@ -66,30 +66,6 @@ impl Point {
                      s.h as u32)
     }
 
-    pub fn x(&self) -> f64 {
-        self.x
-    }
-
-    pub fn y(&self) -> f64 {
-        self.y
-    }
-
-    pub fn set_x(&mut self, x: f64) {
-        self.x = x;
-    }
-
-    pub fn set_y(&mut self, y: f64) {
-        self.y = y;
-    }
-
-    pub fn add_x(&mut self, x: f64) {
-        self.x += x;
-    }
-
-    pub fn add_y(&mut self, y: f64) {
-        self.y += y;
-    }
-
     pub fn is_diag(&self) -> bool {
         self.x != 0.0 && self.y != 0.0
     }
@@ -101,8 +77,9 @@ impl Point {
     }
 
     pub fn round(&mut self) {
-        self.x = self.x.round();
-        self.y = self.y.round();
+        //TODO figure out something better for camera smoothing
+        self.x = (self.x * 100.0).round() / 100.0;
+        self.y = (self.y * 100.0).round() / 100.0;
     }
 }
 
@@ -110,7 +87,7 @@ impl Add<Point> for Point {
     type Output = Point;
 
     fn add(self, rhs: Point) -> Point {
-        Point::new(self.x + rhs.x(), self.y + rhs.y())
+        Point::new(self.x + rhs.x, self.y + rhs.y)
     }
 }
 
@@ -118,7 +95,7 @@ impl Sub<Point> for Point {
     type Output = Point;
 
     fn sub(self, rhs: Point) -> Point {
-        Point::new(self.x - rhs.x(), self.y - rhs.y())
+        Point::new(self.x - rhs.x, self.y - rhs.y)
     }
 }
 
@@ -134,7 +111,7 @@ impl Div<Size> for Point {
     type Output = Point;
 
     fn div(self, rhs: Size) -> Point {
-        Point::new(self.x / rhs.w(), self.y / rhs.h())
+        Point::new(self.x / rhs.w, self.y / rhs.h)
     }
 }
 
@@ -145,13 +122,5 @@ impl Size {
 
     pub fn to_point(&self) -> Point {
         Point::new(self.w, self.h)
-    }
-
-    pub fn w(&self) -> f64 {
-        self.w
-    }
-
-    pub fn h(&self) -> f64 {
-        self.h
     }
 }

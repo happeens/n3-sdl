@@ -121,10 +121,10 @@ impl<'a> Game<'a> {
 
         for key in self.held_keys.iter() {
             match key {
-                &KeyAction::Up => move_intention.add_y(-1.0),
-                &KeyAction::Down => move_intention.add_y(1.0),
-                &KeyAction::Left => move_intention.add_x(-1.0),
-                &KeyAction::Right => move_intention.add_x(1.0),
+                &KeyAction::Up => move_intention.y -= 1.0,
+                &KeyAction::Down => move_intention.y += 1.0,
+                &KeyAction::Left => move_intention.x -= 1.0,
+                &KeyAction::Right => move_intention.x += 1.0,
             }
         }
 

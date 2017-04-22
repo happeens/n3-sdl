@@ -10,11 +10,7 @@ use camera::Camera;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilelayerData {
     data: String,
-    encoding: String,
-    height: u16,
-    width: u16,
-    opacity: f64,
-    visible: bool,
+    encoding: String, height: u16, width: u16, opacity: f64, visible: bool,
     x: u16,
     y: u16,
 }
@@ -54,8 +50,8 @@ impl Tilelayer {
         for y in 0..data.height {
             for x in 0..data.width {
                 if counter >= fields.len() { break; }
-                let pos = Point::new(x as f64 * tilesize.w(),
-                                     y as f64 * tilesize.h());
+                let pos = Point::new(x as f64 * tilesize.w,
+                                     y as f64 * tilesize.h);
 
                 if let Some(tile) = Tile::from_gid(fields[counter],
                                                    &tilesets,
@@ -73,8 +69,7 @@ impl Tilelayer {
             opacity: data.opacity,
             visible: data.visible,
             tilesize: tilesize.clone(),
-            tiles: tiles,
-        }
+            tiles: tiles, }
     }
 
     pub fn draw(&self, mut r: &mut Renderer, c: &Camera) {

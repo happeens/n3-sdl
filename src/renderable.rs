@@ -16,7 +16,7 @@ impl Renderable {
     pub fn new(pos: Point, size: Size, color: Color) -> Renderable {
         Renderable {
             pos: pos,
-            anchor: Point::new(size.w() / 2.0, size.h() / 2.0),
+            anchor: Point::new(size.w / 2.0, size.h / 2.0),
             size: size,
             color: color,
         }

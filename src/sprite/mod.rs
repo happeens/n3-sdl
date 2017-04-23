@@ -10,7 +10,7 @@ use camera::Camera;
 
 #[derive(Clone)]
 pub struct Sprite {
-    name: String,
+    pub name: String,
     size: Size,
     src: Point,
     src_size: Size,

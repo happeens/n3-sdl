@@ -16,6 +16,7 @@ mod game;
 use game::Game;
 
 mod sprite;
+mod animation;
 mod renderable;
 
 mod player;

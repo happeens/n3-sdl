@@ -41,6 +41,7 @@ impl<'a> Game<'a> {
         let start_pos = Point::new(0.0, 0.0);
 
         let mut player = Player::new(start_pos, &sc);
+        player.run_anim("walk-down");
         let camera = Camera::new(
             player.get_pos(),
             Size::new(800.0, 600.0),
@@ -141,6 +142,16 @@ impl<'a> Game<'a> {
         }
 
         self.try_move_player(move_intention, dt);
+
+        if self.player.is_moving() {
+            match self.player.get_facing() {
+                Direction::Up => self.player.run_anim("walk-up"),
+                Direction::Down => self.player.run_anim("walk-down"),
+                Direction::Left => self.player.run_anim("walk-left"),
+                Direction::Right => self.player.run_anim("walk-right"),
+                _ => {}
+            }
+        }
 
         self.world.update(dt);
 

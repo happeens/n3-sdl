@@ -78,8 +78,8 @@ impl Point {
 
     pub fn round(&mut self) {
         //TODO figure out something better for camera smoothing
-        self.x = (self.x * 100.0).round() / 100.0;
-        self.y = (self.y * 100.0).round() / 100.0;
+        // self.x = (self.x * 100.0).round() / 100.0;
+        // self.y = (self.y * 100.0).round() / 100.0;
     }
 }
 

@@ -1,0 +1,38 @@
+[
+    {
+        "name": "walk-down",
+        "frames": [
+            {"name": "player-0-0"},
+            {"name": "player-0-1"},
+            {"name": "player-0-2"},
+            {"name": "player-0-3"}
+        ]
+    },
+    {
+        "name": "walk-left",
+        "frames": [
+            {"name": "player-2-0"},
+            {"name": "player-2-1"},
+            {"name": "player-2-2"},
+            {"name": "player-2-3"}
+        ]
+    },
+    {
+        "name": "walk-right",
+        "frames": [
+            {"name": "player-3-0"},
+            {"name": "player-3-1"},
+            {"name": "player-3-2"},
+            {"name": "player-3-3"}
+        ]
+    },
+    {
+        "name": "walk-up",
+        "frames": [
+            {"name": "player-1-0"},
+            {"name": "player-1-1"},
+            {"name": "player-1-2"},
+            {"name": "player-1-3"}
+        ]
+    }
+]

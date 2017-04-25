@@ -1,4 +1,5 @@
 extern crate sdl2;
+extern crate cgmath;
 extern crate time;
 
 #[macro_use]

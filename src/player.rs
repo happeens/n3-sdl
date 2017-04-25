@@ -1,5 +1,4 @@
 use sdl2::render::Renderer;
-use renderable::Renderable;
 
 use std::fs::File;
 use std::path::Path;
@@ -11,7 +10,9 @@ use sprite::spritecache::SpriteCache;
 
 use animation::Animation;
 
-use types::{Point, Size, KeyAction};
+use types::KeyAction;
+
+use cgmath::{Point2, Vector2};
 
 const PLAYER_SPEED: f64 = 130.0;
 
@@ -24,8 +25,8 @@ pub enum Direction {
 }
 
 pub struct Player {
-    pos: Point,
-    vel: Point,
+    pos: Point2<f64>,
+    vel: Vector2<f64>,
     facing: Direction,
     frames: Vec<Sprite>,
     current: usize,
@@ -39,13 +40,12 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(start_pos: Point, sc: &SpriteCache) -> Player {
+    pub fn new(start_pos: Point2<f64>, sc: &SpriteCache) -> Player {
         let mut frames = Vec::new();
         for i in 0..4 {
             for j in 0..4 {
                 let frame_name = format!("player-{}-{}", i, j);
                 if let Some(frame) = sc.get_sprite(&frame_name) {
-                    println!("found frame: {}", frame_name);
                     frames.push(frame);
                 } else {
                     println!("missing player frame: {}", frame_name);
@@ -63,7 +63,7 @@ impl Player {
 
         Player {
             pos: start_pos,
-            vel: Point::new(0.0, 0.0),
+            vel: Vector2::new(0.0, 0.0),
             facing: Direction::Down,
             frames: frames,
             current: 1,
@@ -122,19 +122,19 @@ impl Player {
         self.vel.y != 0.0 || self.vel.x != 0.0
     }
 
-    pub fn next_pos(&mut self, dt: f64, vel: Point) -> Point {
+    pub fn next_pos(&mut self, dt: f64, vel: Vector2<f64>) -> Point2<f64> {
         self.pos + (vel * dt * PLAYER_SPEED)
     }
 
-    pub fn get_pos(&self) -> Point {
+    pub fn get_pos(&self) -> Point2<f64> {
         self.pos
     }
 
-    pub fn get_vel(&self) -> Point {
+    pub fn get_vel(&self) -> Vector2<f64> {
         self.vel
     }
 
-    pub fn set_vel(&mut self, vel: Point) {
+    pub fn set_vel(&mut self, vel: Vector2<f64>) {
         self.vel = vel;
     }
 

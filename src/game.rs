@@ -16,6 +16,7 @@ use player::{Player, Direction};
 use camera::Camera;
 
 use types::{TilePos, Point, Size, KeyAction};
+use cgmath::{Vector2, Point2};
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
@@ -39,7 +40,7 @@ impl<'a> Game<'a> {
         sc.load_sheet("test", &mut r);
 
         let world = World::new(&mut r);
-        let start_pos = Point::new(0.0, 0.0);
+        let start_pos = cgmath::Point::new(0.0, 0.0);
 
         let mut player = Player::new(start_pos, &sc);
         let camera = Camera::new(player.get_pos(), Size::new(800.0, 600.0), CAMERA_SPEED);
@@ -120,7 +121,7 @@ impl<'a> Game<'a> {
             }
         }
 
-        let mut move_intention = Point::new(0.0, 0.0);
+        let mut move_intention = Vector2::new(0.0, 0.0);
 
         for key in self.held_keys.iter() {
             match key {
@@ -174,14 +175,16 @@ impl<'a> Game<'a> {
         self.renderer.present();
     }
 
-    pub fn try_move_player(&mut self, v: Point, dt: f64) {
+    pub fn try_move_player(&mut self, v: Vector2<f64>, dt: f64) {
         let mut v = v;
 
         // finding next player position for collision
         // let next_pos = self.player.next_pos(dt, v);
         // let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
         // let new_y = self.player.next_pos(dt, Point::new(0.0, v.y()));
-        v.mult_diag();
+
+        //TODO: implement this for cgmath
+        //v.mult_diag();
         self.player.set_vel(v);
     }
 }

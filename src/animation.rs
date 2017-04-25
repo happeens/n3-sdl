@@ -30,7 +30,6 @@ impl Animation {
             let mut anim = Animation::new(&anim_data.name);
             for anim_frame_data in anim_data.frames {
                 if let Some(index) = find_index(&anim_frame_data.name, &sprites) {
-                    println!("found index: {}", index);
                     let frame = AnimFrame::new(index, 0.3);
                     anim.frames.push(frame);
                 }

@@ -36,14 +36,6 @@ impl TilePos {
     pub fn from_point(p: Point) -> TilePos {
         TilePos::new(p.x as u32, p.y as u32)
     }
-
-    pub fn x(&self) -> u32 {
-        self.x
-    }
-
-    pub fn y(&self) -> u32 {
-        self.y
-    }
 }
 
 impl Sub<TilePos> for TilePos {
@@ -74,12 +66,6 @@ impl Point {
         let mult = (0.5f64).sqrt();
         self.x *= mult;
         self.y *= mult;
-    }
-
-    pub fn round(&mut self) {
-        //TODO figure out something better for camera smoothing
-        // self.x = (self.x * 100.0).round() / 100.0;
-        // self.y = (self.y * 100.0).round() / 100.0;
     }
 }
 

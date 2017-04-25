@@ -2,3 +2,6 @@ target
 
 Session.vim
 *.swp
+
+*.dll
+*.lib

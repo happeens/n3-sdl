@@ -4,6 +4,7 @@ use std::thread::sleep;
 
 use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer;
+use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 
 use sdl2::event::Event::*;
@@ -41,12 +42,9 @@ impl<'a> Game<'a> {
         let start_pos = Point::new(0.0, 0.0);
 
         let mut player = Player::new(start_pos, &sc);
-        player.run_anim("walk-down");
-        let camera = Camera::new(
-            player.get_pos(),
-            Size::new(800.0, 600.0),
-            CAMERA_SPEED);
+        let camera = Camera::new(player.get_pos(), Size::new(800.0, 600.0), CAMERA_SPEED);
 
+        let (screen_x, screen_y) = r.output_size().unwrap();
 
         Game {
             world: world,
@@ -56,7 +54,7 @@ impl<'a> Game<'a> {
             events: e,
             renderer: r,
             sprite_cache: sc,
-            held_keys: Vec::new(),
+            held_keys: Vec::new()
         }
     }
 
@@ -96,7 +94,9 @@ impl<'a> Game<'a> {
             match event {
                 Quit { .. } => self.running = false,
                 KeyDown { keycode, repeat, .. } => {
-                    if repeat { continue; }
+                    if repeat {
+                        continue;
+                    }
 
                     match keycode {
                         Some(Escape) => self.running = false,
@@ -104,16 +104,18 @@ impl<'a> Game<'a> {
                         Some(A) => self.held_keys.push(KeyAction::Left),
                         Some(S) => self.held_keys.push(KeyAction::Down),
                         Some(D) => self.held_keys.push(KeyAction::Right),
-                        _ => {},
+                        _ => {}
                     }
-                },
-                KeyUp { keycode, .. } => match keycode {
-                    Some(W) => self.held_keys.retain(|&x| x != KeyAction::Up),
-                    Some(A) => self.held_keys.retain(|&x| x != KeyAction::Left),
-                    Some(S) => self.held_keys.retain(|&x| x != KeyAction::Down),
-                    Some(D) => self.held_keys.retain(|&x| x != KeyAction::Right),
-                    _ => {}
-                },
+                }
+                KeyUp { keycode, .. } => {
+                    match keycode {
+                        Some(W) => self.held_keys.retain(|&x| x != KeyAction::Up),
+                        Some(A) => self.held_keys.retain(|&x| x != KeyAction::Left),
+                        Some(S) => self.held_keys.retain(|&x| x != KeyAction::Down),
+                        Some(D) => self.held_keys.retain(|&x| x != KeyAction::Right),
+                        _ => {}
+                    }
+                }
                 _ => {}
             }
         }
@@ -156,7 +158,6 @@ impl<'a> Game<'a> {
         self.world.update(dt);
 
         let player_pos = self.player.get_pos();
-
         self.camera.set_target(player_pos);
         self.camera.update(dt);
 

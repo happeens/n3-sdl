@@ -1,7 +1,8 @@
 use sdl2::pixels::Color;
 use sdl2::render::Renderer;
 
-use types::{Point, Size};
+use types::Size;
+use types::CgPoint as Point;
 use camera::Camera;
 
 #[derive(Debug, Copy, Clone)]

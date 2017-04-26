@@ -15,8 +15,9 @@ use world::World;
 use player::{Player, Direction};
 use camera::Camera;
 
-use types::{TilePos, Point, Size, KeyAction};
-use cgmath::{Vector2, Point2};
+use types::{TilePos, KeyAction, Size};
+use types::CgPoint as Point;
+use types::CgVec2 as Vec2;
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
@@ -40,7 +41,7 @@ impl<'a> Game<'a> {
         sc.load_sheet("test", &mut r);
 
         let world = World::new(&mut r);
-        let start_pos = cgmath::Point::new(0.0, 0.0);
+        let start_pos = Point::new(0.0, 0.0);
 
         let mut player = Player::new(start_pos, &sc);
         let camera = Camera::new(player.get_pos(), Size::new(800.0, 600.0), CAMERA_SPEED);
@@ -121,7 +122,7 @@ impl<'a> Game<'a> {
             }
         }
 
-        let mut move_intention = Vector2::new(0.0, 0.0);
+        let mut move_intention = Vec2::new(0.0, 0.0);
 
         for key in self.held_keys.iter() {
             match key {
@@ -140,9 +141,10 @@ impl<'a> Game<'a> {
             _ => {}
         }
 
-        if move_intention.is_diag() {
-            move_intention.mult_diag();
-        }
+        //TODO
+        // if move_intention.is_diag() {
+        //     move_intention.mult_diag();
+        // }
 
         self.try_move_player(move_intention, dt);
 
@@ -175,7 +177,7 @@ impl<'a> Game<'a> {
         self.renderer.present();
     }
 
-    pub fn try_move_player(&mut self, v: Vector2<f64>, dt: f64) {
+    pub fn try_move_player(&mut self, v: Vec2, dt: f64) {
         let mut v = v;
 
         // finding next player position for collision

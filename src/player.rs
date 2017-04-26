@@ -12,7 +12,8 @@ use animation::Animation;
 
 use types::KeyAction;
 
-use cgmath::{Point2, Vector2};
+use types::CgPoint as Point;
+use types::CgVec2 as Vec2;
 
 const PLAYER_SPEED: f64 = 130.0;
 
@@ -25,8 +26,8 @@ pub enum Direction {
 }
 
 pub struct Player {
-    pos: Point2<f64>,
-    vel: Vector2<f64>,
+    pos: Point,
+    vel: Vec2,
     facing: Direction,
     frames: Vec<Sprite>,
     current: usize,
@@ -40,7 +41,7 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(start_pos: Point2<f64>, sc: &SpriteCache) -> Player {
+    pub fn new(start_pos: Point, sc: &SpriteCache) -> Player {
         let mut frames = Vec::new();
         for i in 0..4 {
             for j in 0..4 {
@@ -63,7 +64,7 @@ impl Player {
 
         Player {
             pos: start_pos,
-            vel: Vector2::new(0.0, 0.0),
+            vel: Vec2::new(0.0, 0.0),
             facing: Direction::Down,
             frames: frames,
             current: 1,
@@ -122,19 +123,19 @@ impl Player {
         self.vel.y != 0.0 || self.vel.x != 0.0
     }
 
-    pub fn next_pos(&mut self, dt: f64, vel: Vector2<f64>) -> Point2<f64> {
+    pub fn next_pos(&mut self, dt: f64, vel: Vec2) -> Point {
         self.pos + (vel * dt * PLAYER_SPEED)
     }
 
-    pub fn get_pos(&self) -> Point2<f64> {
+    pub fn get_pos(&self) -> Point {
         self.pos
     }
 
-    pub fn get_vel(&self) -> Vector2<f64> {
+    pub fn get_vel(&self) -> Vec2 {
         self.vel
     }
 
-    pub fn set_vel(&mut self, vel: Vector2<f64>) {
+    pub fn set_vel(&mut self, vel: Vec2) {
         self.vel = vel;
     }
 

@@ -1,4 +1,5 @@
-use types::{Point, Size};
+use types::Size;
+use types::CgPoint as Point;
 
 const THRESHOLD: f64 = 0.3;
 
@@ -29,8 +30,9 @@ impl Camera {
 
     pub fn update(&mut self, dt: f64) {
         let target = self.target - self.screen.to_point() * 0.5;
-        let distance = target - self.pos;
-        let mut next_pos = self.pos + distance * self.speed * dt;
+        let dist_x = target.x - self.pos.x;
+        let dist_y = target.y - self.pos.y;
+        let mut next_pos = self.pos + Point::new(dist_x, dist_y) * self.speed * dt;
 
         if (next_pos.x - self.pos.x).abs() <= THRESHOLD {
             next_pos.x = self.pos.x;

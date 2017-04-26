@@ -5,7 +5,8 @@ use std::rc::Rc;
 
 use sdl2::render::{Texture, Renderer};
 
-use types::{Point, Size};
+use types::Size;
+use types::CgPoint as Point;
 use camera::Camera;
 
 #[derive(Clone)]

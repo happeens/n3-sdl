@@ -2,6 +2,9 @@ use sdl2::rect::Rect as SdlRect;
 
 use std::ops::{Add, Sub, Mul, Div};
 
+pub type CgPoint = super::cgmath::Point2<f64>;
+pub type CgVec2 = super::cgmath::Vector2<f64>;
+
 #[derive(PartialEq, Eq, Debug, Hash, Copy, Clone)]
 pub enum KeyAction {
     Up,
@@ -106,7 +109,7 @@ impl Size {
         Size { w: w, h: h }
     }
 
-    pub fn to_point(&self) -> Point {
-        Point::new(self.w, self.h)
+    pub fn to_point(&self) -> CgPoint {
+        CgPoint::new(self.w, self.h)
     }
 }

@@ -15,9 +15,7 @@ use world::World;
 use player::{Player, Direction};
 use camera::Camera;
 
-use types::{TilePos, KeyAction, Size};
-use types::CgPoint as Point;
-use types::CgVec2 as Vec2;
+use types::{KeyAction, Size, Point, Vec2};
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;

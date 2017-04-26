@@ -10,10 +10,7 @@ use sprite::spritecache::SpriteCache;
 
 use animation::Animation;
 
-use types::KeyAction;
-
-use types::CgPoint as Point;
-use types::CgVec2 as Vec2;
+use types::{KeyAction, Point, Vec2};
 
 const PLAYER_SPEED: f64 = 130.0;
 

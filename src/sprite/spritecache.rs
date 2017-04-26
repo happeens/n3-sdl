@@ -9,8 +9,7 @@ use std::io::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use types::Size;
-use types::CgPoint as Point;
+use types::{Size, Point};
 
 use super::Sprite;
 

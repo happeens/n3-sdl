@@ -4,7 +4,7 @@ use super::tile::Tile;
 use sdl2::render::{Texture, Renderer};
 use sdl2::image::LoadTexture;
 
-use types::{Point, Size};
+use types::{Size, Point};
 use camera::Camera;
 
 #[derive(Serialize, Deserialize, Debug)]

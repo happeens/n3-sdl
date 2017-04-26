@@ -6,7 +6,9 @@ use std::rc::Rc;
 use super::tileset::Tileset;
 
 use camera::Camera;
-use types::{Point, Size};
+use types::Size;
+use types::Point;
+use types::to_sdl_rect;
 
 pub struct Tile {
     pos: Point,
@@ -64,9 +66,9 @@ impl Tile {
     }
 
     pub fn draw(&self, r: &mut Renderer, c: &Camera) {
-        let dest = self.pos - c.get_pos();
+        let dest = self.pos + (c.as_vec() * -1.0);
         let _ = r.copy(&mut self.tex.borrow_mut(),
-                       Some(self.src.to_sdl_rect(self.src_size)),
-                       Some(dest.to_sdl_rect(self.size)));
+                       Some(to_sdl_rect(self.src, self.src_size)),
+                       Some(to_sdl_rect(dest, self.size)));
     }
 }

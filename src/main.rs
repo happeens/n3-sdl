@@ -18,7 +18,6 @@ use game::Game;
 
 mod sprite;
 mod animation;
-mod renderable;
 
 mod player;
 mod camera;

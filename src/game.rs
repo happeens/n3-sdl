@@ -11,12 +11,13 @@ use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
 
 use sprite::SpriteCache;
-use world::World;
 use camera::Camera;
+
+use tilemap::Tilemap;
 
 use types::{KeyAction, Size, Point, Vec2, Direction};
 
-use entities::Player;
+use entities::{Player, PlayerData};
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
@@ -24,7 +25,7 @@ const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
 const CAMERA_SPEED: f64 = 2.0;
 
 pub struct Game<'a> {
-    world: World,
+    map: Tilemap,
     player: Player,
     camera: Camera,
     running: bool,
@@ -39,7 +40,6 @@ impl<'a> Game<'a> {
         let mut sc = SpriteCache::new();
         sc.load_sheet("test", &mut r);
 
-        let world = World::new(&mut r);
         let start_pos = Point::new(0.0, 0.0);
 
         use std::fs::File;
@@ -50,7 +50,6 @@ impl<'a> Game<'a> {
         let mut player_content = String::new();
         let _ = player_file.read_to_string(&mut player_content);
 
-        use entities::PlayerData;
         let player_data: PlayerData = super::serde_json::from_str(&player_content).unwrap();
         let mut player = Player::new(&player_data, start_pos, &sc);
 
@@ -59,7 +58,7 @@ impl<'a> Game<'a> {
         let (screen_x, screen_y) = r.output_size().unwrap();
 
         Game {
-            world: world,
+            map: Tilemap::new(&mut r),
             player: player,
             camera: camera,
             running: false,
@@ -143,8 +142,8 @@ impl<'a> Game<'a> {
             }
         }
 
-        use cgmath::prelude::*;
         if move_intention.x != 0.0 || move_intention.y != 0.0 {
+            use cgmath::prelude::*;
             move_intention = move_intention.normalize_to(1.0)
         }
 
@@ -158,8 +157,6 @@ impl<'a> Game<'a> {
             _ => {}
         }
 
-        self.world.update(dt);
-
         let player_pos = self.player.get_pos();
         self.camera.set_target(player_pos);
         self.camera.update(dt);
@@ -171,8 +168,9 @@ impl<'a> Game<'a> {
         self.renderer.set_draw_color(Color::RGB(0, 0, 0));
         self.renderer.clear();
 
-        self.world.draw(&mut self.renderer, &self.camera);
+        self.map.draw_background(&mut self.renderer, &self.camera);
         self.player.draw(&mut self.renderer, &self.camera);
+        self.map.draw_foreground(&mut self.renderer, &self.camera);
 
         self.renderer.present();
     }
@@ -185,8 +183,6 @@ impl<'a> Game<'a> {
         // let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
         // let new_y = self.player.next_pos(dt, Point::new(0.0, v.y()));
 
-        //TODO: implement this for cgmath
-        //v.mult_diag();
         self.player.set_vel(v);
     }
 }

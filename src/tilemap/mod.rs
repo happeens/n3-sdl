@@ -38,13 +38,14 @@ pub struct Tilemap {
     width: u16,
     height: u16,
     tilesize: Size,
-    layers: Vec<Tilelayer>,
+    bg_layers: Vec<Tilelayer>,
+    fg_layers: Vec<Tilelayer>,
     tilesets: Vec<Tileset>,
 }
 
 impl Tilemap {
     pub fn new(mut r: &mut Renderer) -> Tilemap {
-        let mut file = File::open(Path::new("assets/testmap.jmap")).unwrap();
+        let mut file = File::open(Path::new("assets/testmap.json")).unwrap();
         let mut content = String::new();
         let _ = file.read_to_string(&mut content);
 
@@ -56,22 +57,37 @@ impl Tilemap {
             tilesets.push(Tileset::new(&td, r));
         }
 
-        let mut layers = Vec::new();
+        let mut bg_layers = Vec::new();
+        let mut fg_layers = Vec::new();
         for tl in &data.layers {
-            layers.push(Tilelayer::new(&tl, &tilesets, &tilesize));
+            //TODO decide this based on layer properties
+            println!("layer name: {}", tl.name);
+            if tl.name == "ground" {
+                println!("bg layer found!");
+                bg_layers.push(Tilelayer::new(&tl, &tilesets, &tilesize));
+            } else {
+                fg_layers.push(Tilelayer::new(&tl, &tilesets, &tilesize));
+            }
         }
 
         Tilemap {
             width: data.width,
             height: data.height,
             tilesize: tilesize,
-            layers: layers,
+            bg_layers: bg_layers,
+            fg_layers: fg_layers,
             tilesets: tilesets,
         }
     }
 
-    pub fn draw(&self, mut r: &mut Renderer, c: &Camera) {
-        for layer in &self.layers {
+    pub fn draw_background(&self, mut r: &mut Renderer, c: &Camera) {
+        for layer in self.bg_layers.iter() {
+            layer.draw(r, c);
+        }
+    }
+
+    pub fn draw_foreground(&self, mut r: &mut Renderer, c: &Camera) {
+        for layer in self.fg_layers.iter() {
             layer.draw(r, c);
         }
     }

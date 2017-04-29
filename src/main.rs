@@ -22,7 +22,6 @@ mod state;
 
 mod entities;
 mod camera;
-mod world;
 mod tilemap;
 
 fn main() {

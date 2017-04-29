@@ -9,8 +9,13 @@ use camera::Camera;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilelayerData {
+    pub name: String,
     data: String,
-    encoding: String, height: u16, width: u16, opacity: f64, visible: bool,
+    encoding: String,
+    height: u16,
+    width: u16,
+    opacity: f64,
+    visible: bool,
     x: u16,
     y: u16,
 }

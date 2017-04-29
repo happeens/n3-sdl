@@ -1,4 +1,8 @@
-pub mod spritecache;
+mod sprite_cache;
+pub type SpriteCache = sprite_cache::SpriteCache;
+
+mod sprite_manager;
+pub type SpriteManager = sprite_manager::SpriteManager;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -8,6 +12,11 @@ use sdl2::render::{Texture, Renderer};
 use types::{Point, Size};
 use types::to_sdl_rect;
 use camera::Camera;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SpriteData {
+    name: String
+}
 
 #[derive(Clone)]
 pub struct Sprite {

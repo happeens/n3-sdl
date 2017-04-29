@@ -18,8 +18,9 @@ use game::Game;
 
 mod sprite;
 mod animation;
+mod state;
 
-mod player;
+mod entities;
 mod camera;
 mod world;
 mod tilemap;

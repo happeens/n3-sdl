@@ -10,12 +10,13 @@ use sdl2::pixels::Color;
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
 
-use sprite::spritecache::SpriteCache;
+use sprite::SpriteCache;
 use world::World;
-use player::{Player, Direction};
 use camera::Camera;
 
-use types::{KeyAction, Size, Point, Vec2};
+use types::{KeyAction, Size, Point, Vec2, Direction};
+
+use entities::Player;
 
 const NANOS_IN_SECOND: f64 = 1000000000.0;
 const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
@@ -41,7 +42,18 @@ impl<'a> Game<'a> {
         let world = World::new(&mut r);
         let start_pos = Point::new(0.0, 0.0);
 
-        let mut player = Player::new(start_pos, &sc);
+        use std::fs::File;
+        use std::path::Path;
+        use std::io::prelude::*;
+
+        let mut player_file = File::open(Path::new("assets/player.json")).unwrap();
+        let mut player_content = String::new();
+        let _ = player_file.read_to_string(&mut player_content);
+
+        use entities::PlayerData;
+        let player_data: PlayerData = super::serde_json::from_str(&player_content).unwrap();
+        let mut player = Player::new(&player_data, start_pos, &sc);
+
         let camera = Camera::new(player.get_pos(), Size::new(800.0, 600.0), CAMERA_SPEED);
 
         let (screen_x, screen_y) = r.output_size().unwrap();
@@ -131,29 +143,19 @@ impl<'a> Game<'a> {
             }
         }
 
-        match self.held_keys.last() {
-            Some(&KeyAction::Up) => self.player.set_facing(Direction::Up),
-            Some(&KeyAction::Down) => self.player.set_facing(Direction::Down),
-            Some(&KeyAction::Left) => self.player.set_facing(Direction::Left),
-            Some(&KeyAction::Right) => self.player.set_facing(Direction::Right),
-            _ => {}
+        use cgmath::prelude::*;
+        if move_intention.x != 0.0 || move_intention.y != 0.0 {
+            move_intention = move_intention.normalize_to(1.0)
         }
-
-        //TODO
-        // if move_intention.is_diag() {
-        //     move_intention.mult_diag();
-        // }
 
         self.try_move_player(move_intention, dt);
 
-        if self.player.is_moving() {
-            match self.player.get_facing() {
-                Direction::Up => self.player.run_anim("walk-up"),
-                Direction::Down => self.player.run_anim("walk-down"),
-                Direction::Left => self.player.run_anim("walk-left"),
-                Direction::Right => self.player.run_anim("walk-right"),
-                _ => {}
-            }
+        match self.held_keys.last() {
+            Some(&KeyAction::Down) => self.player.set_facing(Direction::Down),
+            Some(&KeyAction::Up) => self.player.set_facing(Direction::Up),
+            Some(&KeyAction::Left) => self.player.set_facing(Direction::Left),
+            Some(&KeyAction::Right) => self.player.set_facing(Direction::Right),
+            _ => {}
         }
 
         self.world.update(dt);

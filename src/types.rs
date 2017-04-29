@@ -5,6 +5,14 @@ use std::ops::{Add, Sub, Mul, Div};
 pub type Point = super::cgmath::Point2<f64>;
 pub type Vec2 = super::cgmath::Vector2<f64>;
 
+#[derive(Copy, Clone)]
+pub enum Direction {
+    Down,
+    Up,
+    Left,
+    Right
+}
+
 pub fn to_sdl_rect(p: Point, s: Size) -> SdlRect {
     SdlRect::new(p.x as i32, p.y as i32, s.w as u32, s.h as u32)
 }

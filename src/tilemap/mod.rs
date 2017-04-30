@@ -8,11 +8,6 @@ use sdl2::image::LoadTexture;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use std::fs::File;
-use std::path::Path;
-use std::io::prelude::*;
-use std::collections::HashMap;
-
 use types::{Size, Point};
 use camera::Camera;
 
@@ -45,11 +40,7 @@ pub struct Tilemap {
 
 impl Tilemap {
     pub fn new(mut r: &mut Renderer) -> Tilemap {
-        let mut file = File::open(Path::new("assets/testmap.json")).unwrap();
-        let mut content = String::new();
-        let _ = file.read_to_string(&mut content);
-
-        let data: TilemapData = super::serde_json::from_str(&content).unwrap();
+        let data: TilemapData = super::util::load_data("testmap.json").unwrap();
         let tilesize = Size::new(data.tilewidth, data.tileheight);
 
         let mut tilesets = Vec::new();

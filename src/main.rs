@@ -24,6 +24,8 @@ mod entities;
 mod camera;
 mod tilemap;
 
+mod util;
+
 fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video = sdl_context.video().unwrap();

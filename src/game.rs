@@ -43,15 +43,7 @@ impl<'a> Game<'a> {
 
         let start_pos = Point::new(0.0, 0.0);
 
-        use std::fs::File;
-        use std::path::Path;
-        use std::io::prelude::*;
-
-        let mut player_file = File::open(Path::new("assets/player-female0.json")).unwrap();
-        let mut player_content = String::new();
-        let _ = player_file.read_to_string(&mut player_content);
-
-        let player_data: PlayerData = super::serde_json::from_str(&player_content).unwrap();
+        let player_data: PlayerData = super::util::load_data("player-female0.json").unwrap();
         let mut player = Player::new(&player_data, start_pos, &sc);
 
         let camera = Camera::new(player.get_pos(), Size::new(800.0, 600.0), CAMERA_SPEED);

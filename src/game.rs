@@ -39,6 +39,7 @@ impl<'a> Game<'a> {
     pub fn new(e: SdlEvents, mut r: Renderer) -> Game {
         let mut sc = SpriteCache::new();
         sc.load_sheet("test", &mut r);
+        sc.load_sheet("female0", &mut r);
 
         let start_pos = Point::new(0.0, 0.0);
 
@@ -46,7 +47,7 @@ impl<'a> Game<'a> {
         use std::path::Path;
         use std::io::prelude::*;
 
-        let mut player_file = File::open(Path::new("assets/player.json")).unwrap();
+        let mut player_file = File::open(Path::new("assets/player-female0.json")).unwrap();
         let mut player_content = String::new();
         let _ = player_file.read_to_string(&mut player_content);
 

@@ -16,7 +16,7 @@ impl AnimManager {
             let mut anim = Animation::new(&anim_data.name);
             for anim_frame_data in anim_data.frames.iter() {
                 if let Some(index) = sprites.find_index(&anim_frame_data.name) {
-                    let frame = AnimFrame::new(index, 0.3);
+                    let frame = AnimFrame::new(index, 0.2);
                     anim.frames.push(frame);
                 }
             }

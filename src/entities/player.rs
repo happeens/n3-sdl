@@ -5,6 +5,7 @@ use types::{Point, Vec2, Direction};
 
 use camera::Camera;
 use sdl2::render::Renderer;
+use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlayerData {
@@ -65,13 +66,13 @@ impl Player {
         self.anims.update(dt);
     }
 
-    pub fn draw(&self, mut r: &mut Renderer, c: &Camera) {
+    pub fn draw(&self, mut ctx: &mut Context) {
         let mut index = self.states.current();
         if self.anims.anim_running() {
             index = self.anims.current();
         }
 
-        self.sprites.draw(index, self.pos, r, c);
+        self.sprites.draw(index, self.pos, ctx);
     }
 
     pub fn set_facing(&mut self, dir: Direction) {

@@ -2,6 +2,7 @@ use sprite::{Sprite, SpriteData, SpriteCache};
 use types::Point;
 use sdl2::render::Renderer;
 use camera::Camera;
+use context::Context;
 
 pub struct SpriteManager {
     sprites: Vec<Sprite>
@@ -34,16 +35,16 @@ impl SpriteManager {
         None
     }
 
-    pub fn draw(&self, index: usize, pos: Point, mut r: &mut Renderer, c: &Camera) {
+    pub fn draw(&self, index: usize, pos: Point, ctx: &mut Context) {
         if index > self.sprites.len() {
             println!("invalid frame for player: {}", index);
 
             //TODO rewrite this to render a rect instead of stupidly
             //     relying on the first sprite being there
-            self.sprites[0].draw(pos, r, c);
+            ctx.draw_texture(pos, &self.sprites[0]);
             return;
         }
 
-        self.sprites[index].draw(pos, r, c);
+        ctx.draw_texture(pos, &self.sprites[index])
     }
 }

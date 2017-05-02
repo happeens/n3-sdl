@@ -1,9 +1,18 @@
 use sdl2::rect::Rect as SdlRect;
+use sdl2::render::Texture;
+use std::cell::RefMut;
 
 use std::ops::{Add, Sub, Mul, Div};
 
 pub type Point = super::cgmath::Point2<f64>;
 pub type Vec2 = super::cgmath::Vector2<f64>;
+
+pub trait Drawable {
+    fn get_src(&self) -> Point;
+    fn get_src_size(&self) -> Size;
+    fn get_size(&self) -> Size;
+    fn get_tex(&self) -> RefMut<Texture>;
+}
 
 #[derive(Copy, Clone)]
 pub enum Direction {

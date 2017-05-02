@@ -10,6 +10,7 @@ use std::rc::Rc;
 
 use types::{Size, Point};
 use camera::Camera;
+use context::Context;
 
 use self::tilelayer::{Tilelayer, TilelayerData};
 use self::tileset::{Tileset, TilesetData};
@@ -39,13 +40,13 @@ pub struct Tilemap {
 }
 
 impl Tilemap {
-    pub fn new(mut r: &mut Renderer) -> Tilemap {
-        let data: TilemapData = super::util::load_data("testmap.json").unwrap();
+    pub fn new(mut ctx: &mut Context) -> Tilemap {
+        let data: TilemapData = super::util::load_data("tilemap-small-0.json").unwrap();
         let tilesize = Size::new(data.tilewidth, data.tileheight);
 
         let mut tilesets = Vec::new();
         for td in &data.tilesets {
-            tilesets.push(Tileset::new(&td, r));
+            tilesets.push(Tileset::new(&td, ctx));
         }
 
         let mut bg_layers = Vec::new();
@@ -71,15 +72,15 @@ impl Tilemap {
         }
     }
 
-    pub fn draw_background(&self, mut r: &mut Renderer, c: &Camera) {
-        for layer in self.bg_layers.iter() {
-            layer.draw(r, c);
+    pub fn draw_fg(&self, mut ctx: &mut Context) {
+        for layer in self.fg_layers.iter() {
+            layer.draw(ctx);
         }
     }
 
-    pub fn draw_foreground(&self, mut r: &mut Renderer, c: &Camera) {
-        for layer in self.fg_layers.iter() {
-            layer.draw(r, c);
+    pub fn draw_bg(&self, mut ctx: &mut Context) {
+        for layer in self.bg_layers.iter() {
+            layer.draw(ctx);
         }
     }
 }

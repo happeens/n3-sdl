@@ -13,8 +13,8 @@ extern crate byteorder;
 use sdl2::image::INIT_PNG;
 
 mod types;
-mod game;
-use game::Game;
+mod context;
+mod scene;
 
 mod sprite;
 mod animation;
@@ -27,17 +27,7 @@ mod tilemap;
 mod util;
 
 fn main() {
-    let sdl_context = sdl2::init().unwrap();
-    let video = sdl_context.video().unwrap();
-    let _image_context = sdl2::image::init(INIT_PNG).unwrap();
-
-    let window = video.window("n3", 800, 600)
-        .position_centered()
-        .opengl()
-        .build().unwrap();
-
-    let mut game = Game::new(
-        sdl_context.event_pump().unwrap(),
-        window.renderer().accelerated().build().unwrap());
-    game.run();
+    let mut main_ctx = context::Context::new();
+    let mut game_scene = scene::GameScene::new(&mut main_ctx);
+    main_ctx.run_scene(&mut game_scene);
 }

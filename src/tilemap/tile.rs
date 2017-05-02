@@ -6,8 +6,7 @@ use std::rc::Rc;
 use super::tileset::Tileset;
 
 use camera::Camera;
-use types::Size;
-use types::Point;
+use types::{Point, Size, Drawable};
 use types::to_sdl_rect;
 
 pub struct Tile {
@@ -53,22 +52,32 @@ impl Tile {
         })
     }
 
-    pub fn get_src(&self) -> Point {
-        self.src
-    }
-
-    pub fn get_size(&self) -> Size {
-        self.size
-    }
-
-    pub fn get_tex(&self) -> RefMut<Texture> {
-        self.tex.borrow_mut()
-    }
-
     pub fn draw(&self, r: &mut Renderer, c: &Camera) {
         let dest = self.pos + (c.as_vec() * -1.0);
         let _ = r.copy(&mut self.tex.borrow_mut(),
                        Some(to_sdl_rect(self.src, self.src_size)),
                        Some(to_sdl_rect(dest, self.size)));
+    }
+
+    pub fn get_pos(&self) -> Point {
+        self.pos
+    }
+}
+
+impl Drawable for Tile {
+    fn get_src(&self) -> Point {
+        self.src
+    }
+
+    fn get_src_size(&self) -> Size {
+        self.src_size
+    }
+
+    fn get_size(&self) -> Size {
+        self.size
+    }
+
+    fn get_tex(&self) -> RefMut<Texture> {
+        self.tex.borrow_mut()
     }
 }

@@ -4,6 +4,8 @@ use sdl2::image::LoadTexture;
 use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
+use context::Context;
+
 use std::path::Path;
 use types::{Size, Point};
 
@@ -30,15 +32,12 @@ pub struct Tileset {
 }
 
 impl Tileset {
-    pub fn new(data: &TilesetData, r: &mut Renderer) -> Tileset {
-        let mut path = String::from("assets/");
-        path.push_str(&data.image);
-        let tex = r.load_texture(Path::new(&path)).unwrap();
+    pub fn new(data: &TilesetData, ctx: &mut Context) -> Tileset {
         Tileset {
             firstgid: data.firstgid,
             tilesize: Size::new(data.tilewidth as f64, data.tileheight as f64),
             columns: data.columns,
-            tex: Rc::new(RefCell::new(tex))
+            tex: ctx.load_texture(&data.image)
         }
     }
 

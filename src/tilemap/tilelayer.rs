@@ -6,6 +6,7 @@ use sdl2::image::LoadTexture;
 
 use types::{Size, Point};
 use camera::Camera;
+use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilelayerData {
@@ -74,12 +75,15 @@ impl Tilelayer {
             opacity: data.opacity,
             visible: data.visible,
             tilesize: tilesize.clone(),
-            tiles: tiles, }
+            tiles: tiles
+        }
     }
 
-    pub fn draw(&self, mut r: &mut Renderer, c: &Camera) {
-        for tile in &self.tiles {
-            tile.draw(r, c);
+    pub fn draw(&self, ctx: &mut Context) {
+        //TODO clean up this mess
+        for tile in self.tiles.iter() {
+            let dest = tile.get_pos();
+            ctx.draw_texture(dest, tile);
         }
     }
 }

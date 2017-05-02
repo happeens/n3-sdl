@@ -1,6 +1,9 @@
 use sdl2::render::{Texture, Renderer};
 use sdl2::image::LoadTexture;
 
+use super::tile::TileData;
+
+use std::collections::HashMap;
 use std::cell::{RefCell, RefMut};
 use std::rc::Rc;
 
@@ -13,15 +16,27 @@ use types::{Size, Point};
 pub struct TilesetData {
     columns: u32,
     firstgid: u32,
-    image: String,
-    imageheight: u16,
-    imagewidth: u16,
     margin: u16,
     name: String,
     spacing: u16,
     tilecount: u16,
     tileheight: u16,
     tilewidth: u16,
+
+    // single image tileset
+    image: Option<String>,
+    imageheight: Option<u16>,
+    imagewidth: Option<u16>,
+
+    //TODO handle image set loading
+    // image set
+    tiles: Option<HashMap<String, TileData>>,
+}
+
+impl TilesetData {
+    pub fn is_image_set(&self) -> bool {
+        self.tiles.is_some()
+    }
 }
 
 pub struct Tileset {
@@ -37,7 +52,7 @@ impl Tileset {
             firstgid: data.firstgid,
             tilesize: Size::new(data.tilewidth as f64, data.tileheight as f64),
             columns: data.columns,
-            tex: ctx.load_texture(&data.image)
+            tex: ctx.load_texture(data.image.as_ref().unwrap())
         }
     }
 

@@ -1,5 +1,6 @@
 use super::tileset::Tileset;
 use super::tile::Tile;
+use super::object::ObjectData;
 
 use sdl2::render::{Texture, Renderer};
 use sdl2::image::LoadTexture;
@@ -9,19 +10,35 @@ use camera::Camera;
 use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct TilelayerData {
+pub struct LayerData {
+    #[serde(rename="type")]
+    layer_type: String,
+
+    // common fields
     pub name: String,
-    data: String,
-    encoding: String,
     height: u16,
     width: u16,
     opacity: f64,
     visible: bool,
     x: u16,
     y: u16,
+
+    // tilelayer fields
+    encoding: Option<String>,
+    data: Option<String>,
+
+    // objectlayer fields
+    draworder: Option<String>,
+    objects: Option<Vec<ObjectData>>,
 }
 
-pub struct Tilelayer {
+impl LayerData {
+    pub fn is_object_layer(&self) -> bool {
+        self.layer_type == "objectgroup"
+    }
+}
+
+pub struct TileLayer {
     width: u16,
     height: u16,
     opacity: f64,
@@ -30,13 +47,13 @@ pub struct Tilelayer {
     tiles: Vec<Tile>,
 }
 
-impl Tilelayer {
-    pub fn new(data: &TilelayerData,
+impl TileLayer {
+    pub fn new(data: &LayerData,
                tilesets: &Vec<Tileset>,
-               tilesize: &Size) -> Tilelayer {
+               tilesize: &Size) -> TileLayer {
         // decode data from base64
         use base64::decode;
-        let bytes = decode(&data.data).unwrap();
+        let bytes = decode(&data.data.as_ref().unwrap()).unwrap();
         let size = (data.width * data.height) as usize;
         assert!(size * 4 == bytes.len());
 
@@ -69,7 +86,7 @@ impl Tilelayer {
             }
         }
 
-        Tilelayer {
+        TileLayer {
             width: data.width,
             height: data.height,
             opacity: data.opacity,
@@ -84,6 +101,24 @@ impl Tilelayer {
         for tile in self.tiles.iter() {
             let dest = tile.get_pos();
             ctx.draw_texture(dest, tile);
+        }
+    }
+}
+
+pub struct ObjectLayer {
+    width: u16,
+    height: u16,
+    opacity: f64,
+    visible: bool,
+}
+
+impl ObjectLayer {
+    pub fn new(data: &LayerData) -> ObjectLayer {
+        ObjectLayer {
+            width: data.width,
+            height: data.height,
+            opacity: data.opacity,
+            visible: data.visible
         }
     }
 }

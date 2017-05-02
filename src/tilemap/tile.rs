@@ -9,6 +9,11 @@ use camera::Camera;
 use types::{Point, Size, Drawable};
 use types::to_sdl_rect;
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TileData {
+    image: String
+}
+
 pub struct Tile {
     pos: Point,
     size: Size,
@@ -50,13 +55,6 @@ impl Tile {
             src_size: tileset.get_tilesize(),
             tex: tileset.clone_tex(),
         })
-    }
-
-    pub fn draw(&self, r: &mut Renderer, c: &Camera) {
-        let dest = self.pos + (c.as_vec() * -1.0);
-        let _ = r.copy(&mut self.tex.borrow_mut(),
-                       Some(to_sdl_rect(self.src, self.src_size)),
-                       Some(to_sdl_rect(dest, self.size)));
     }
 
     pub fn get_pos(&self) -> Point {

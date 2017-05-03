@@ -1,19 +1,24 @@
 use sdl2::rect::Rect as SdlRect;
 use sdl2::render::Texture;
-use std::cell::RefMut;
 
 pub use sdl2::pixels::Color as Color;
 
 use std::ops::{Add, Sub, Mul, Div};
+use std::rc::Rc;
+use std::cell::RefCell;
 
 pub type Point = super::cgmath::Point2<f64>;
 pub type Vec2 = super::cgmath::Vector2<f64>;
 
-pub trait Drawable {
-    fn get_src(&self) -> Point;
-    fn get_src_size(&self) -> Size;
-    fn get_size(&self) -> Size;
-    fn get_tex(&self) -> RefMut<Texture>;
+pub enum RenderInfo {
+    Texture {
+        pos: Point,
+        size: Size,
+        src: Point,
+        src_size: Size,
+        tex: Rc<RefCell<Texture>>
+    },
+    Rect { pos: Point, size: Size, color: Color },
 }
 
 #[derive(Copy, Clone)]

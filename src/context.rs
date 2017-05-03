@@ -11,6 +11,7 @@ use std::path::Path;
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::cell::RefMut;
 
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
@@ -19,7 +20,7 @@ use scene::Scene;
 use camera::Camera;
 use sprite::SpriteCache;
 
-use types::{KeyAction, Point, Size, Drawable, Color};
+use types::{KeyAction, Point, Size, RenderInfo, Color};
 use types::to_sdl_rect;
 
 const CAMERA_SPEED: f64 = 2.0;
@@ -125,17 +126,30 @@ impl<'renderer> Context<'renderer> {
         self.camera.set_target(t);
     }
 
-    pub fn draw_texture<T>(&mut self, pos: Point, d: &T) where T: Drawable {
-        let dest = pos + (self.camera.as_vec() * -1.0);
-        let _ = self.renderer.copy(&mut d.get_tex(),
-                                   Some(to_sdl_rect(d.get_src(), d.get_src_size())),
-                                   Some(to_sdl_rect(dest, d.get_size())));
+    pub fn render(&mut self, r: &RenderInfo) {
+        use std::ops::DerefMut;
+        match *r {
+            RenderInfo::Texture {
+                pos,
+                size,
+                src,
+                src_size,
+                ref tex } => self.copy_texture(pos, size, src, src_size, tex.borrow_mut().deref_mut()),
+            RenderInfo::Rect { pos, size, color } => self.render_rect(pos, size, color),
+        }
     }
 
-    pub fn draw_rect(&mut self, pos: Point, s: Size, c: Color) {
+    fn copy_texture(&mut self, pos: Point, size: Size, src: Point, src_size: Size, tex: &mut Texture) {
         let dest = pos + (self.camera.as_vec() * -1.0);
-        self.renderer.set_draw_color(c);
-        let _ = self.renderer.fill_rect(Some(to_sdl_rect(dest, s)));
+        let _ = self.renderer.copy(tex,
+                                   Some(to_sdl_rect(src, src_size)),
+                                   Some(to_sdl_rect(dest, size)));
+    }
+
+    fn render_rect(&mut self, pos: Point, size: Size, color: Color) {
+        let dest = pos + (self.camera.as_vec() * -1.0);
+        self.renderer.set_draw_color(color);
+        let _ = self.renderer.fill_rect(Some(to_sdl_rect(dest, size)));
     }
 
     fn handle_events(&mut self) {

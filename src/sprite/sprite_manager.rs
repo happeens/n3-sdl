@@ -1,5 +1,5 @@
 use sprite::{Sprite, SpriteData, SpriteCache};
-use types::{Point, Size, Color};
+use types::{Point, Size, Color, RenderInfo};
 use sdl2::render::Renderer;
 use camera::Camera;
 use context::Context;
@@ -39,10 +39,14 @@ impl SpriteManager {
         if index > self.sprites.len() {
             println!("invalid frame for player: {}", index);
 
-            ctx.draw_rect(pos, Size::new(20.0, 20.0), Color::RGBA(255, 0, 0, 255));
+            ctx.render(&RenderInfo::Rect {
+                pos: pos,
+                size: Size::new(20.0, 20.0),
+                color: Color::RGB(255, 0, 0)
+            });
             return;
         }
 
-        ctx.draw_texture(pos, &self.sprites[index])
+        ctx.render(&self.sprites[index].get_render_info(pos));
     }
 }

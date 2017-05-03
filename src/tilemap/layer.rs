@@ -97,10 +97,8 @@ impl TileLayer {
     }
 
     pub fn draw(&self, ctx: &mut Context) {
-        //TODO clean up this mess
         for tile in self.tiles.iter() {
-            let dest = tile.get_pos();
-            ctx.draw_texture(dest, tile);
+            ctx.render(&tile.get_render_info());
         }
     }
 }

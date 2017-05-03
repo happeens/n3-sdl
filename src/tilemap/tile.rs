@@ -6,7 +6,7 @@ use std::rc::Rc;
 use super::tileset::Tileset;
 
 use camera::Camera;
-use types::{Point, Size, Drawable};
+use types::{Point, Size, RenderInfo};
 use types::to_sdl_rect;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -19,6 +19,8 @@ pub struct Tile {
     size: Size,
     src: Point,
     src_size: Size,
+    //TODO figure out if this has a performance impact
+    //     or if there's a better way to do it in general
     tex: Rc<RefCell<Texture>>,
 }
 
@@ -57,25 +59,13 @@ impl Tile {
         })
     }
 
-    pub fn get_pos(&self) -> Point {
-        self.pos
-    }
-}
-
-impl Drawable for Tile {
-    fn get_src(&self) -> Point {
-        self.src
-    }
-
-    fn get_src_size(&self) -> Size {
-        self.src_size
-    }
-
-    fn get_size(&self) -> Size {
-        self.size
-    }
-
-    fn get_tex(&self) -> RefMut<Texture> {
-        self.tex.borrow_mut()
+    pub fn get_render_info(&self) -> RenderInfo {
+        RenderInfo::Texture {
+            pos: self.pos,
+            size: self.size,
+            src: self.src,
+            src_size: self.src_size,
+            tex: self.tex.clone()
+        }
     }
 }

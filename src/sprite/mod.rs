@@ -9,7 +9,7 @@ use std::rc::Rc;
 
 use sdl2::render::{Texture, Renderer};
 
-use types::{Point, Size, Drawable};
+use types::{Point, Size, RenderInfo};
 use types::to_sdl_rect;
 use camera::Camera;
 
@@ -40,28 +40,13 @@ impl Sprite {
         }
     }
 
-    pub fn draw(&self, pos: Point, r: &mut Renderer, c: &Camera) {
-        let dest = pos + (c.as_vec() * -1.0);
-        let _ = r.copy(&mut self.tex.borrow_mut(),
-                       Some(to_sdl_rect(self.src, self.src_size)),
-                       Some(to_sdl_rect(dest, self.size)));
-    }
-}
-
-impl Drawable for Sprite {
-    fn get_src(&self) -> Point {
-        self.src
-    }
-
-    fn get_src_size(&self) -> Size {
-        self.src_size
-    }
-
-    fn get_size(&self) -> Size {
-        self.size
-    }
-
-    fn get_tex(&self) -> RefMut<Texture> {
-        self.tex.borrow_mut()
+    pub fn get_render_info(&self, pos: Point) -> RenderInfo {
+        RenderInfo::Texture {
+            pos: pos,
+            size: self.size,
+            src: self.src,
+            src_size: self.src_size,
+            tex: self.tex.clone()
+        }
     }
 }

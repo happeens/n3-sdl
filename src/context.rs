@@ -6,7 +6,6 @@ use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer as SdlRenderer;
 use sdl2::render::Texture;
 use sdl2::image::{INIT_PNG, LoadTexture};
-use sdl2::pixels::Color;
 
 use std::path::Path;
 
@@ -20,7 +19,7 @@ use scene::Scene;
 use camera::Camera;
 use sprite::SpriteCache;
 
-use types::{KeyAction, Point, Size, Drawable};
+use types::{KeyAction, Point, Size, Drawable, Color};
 use types::to_sdl_rect;
 
 const CAMERA_SPEED: f64 = 2.0;
@@ -131,6 +130,12 @@ impl<'renderer> Context<'renderer> {
         let _ = self.renderer.copy(&mut d.get_tex(),
                                    Some(to_sdl_rect(d.get_src(), d.get_src_size())),
                                    Some(to_sdl_rect(dest, d.get_size())));
+    }
+
+    pub fn draw_rect(&mut self, pos: Point, s: Size, c: Color) {
+        let dest = pos + (self.camera.as_vec() * -1.0);
+        self.renderer.set_draw_color(c);
+        let _ = self.renderer.fill_rect(Some(to_sdl_rect(dest, s)));
     }
 
     fn handle_events(&mut self) {

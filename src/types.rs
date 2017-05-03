@@ -2,6 +2,8 @@ use sdl2::rect::Rect as SdlRect;
 use sdl2::render::Texture;
 use std::cell::RefMut;
 
+pub use sdl2::pixels::Color as Color;
+
 use std::ops::{Add, Sub, Mul, Div};
 
 pub type Point = super::cgmath::Point2<f64>;

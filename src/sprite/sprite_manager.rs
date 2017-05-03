@@ -1,5 +1,5 @@
 use sprite::{Sprite, SpriteData, SpriteCache};
-use types::Point;
+use types::{Point, Size, Color};
 use sdl2::render::Renderer;
 use camera::Camera;
 use context::Context;
@@ -39,9 +39,7 @@ impl SpriteManager {
         if index > self.sprites.len() {
             println!("invalid frame for player: {}", index);
 
-            //TODO rewrite this to render a rect instead of stupidly
-            //     relying on the first sprite being there
-            ctx.draw_texture(pos, &self.sprites[0]);
+            ctx.draw_rect(pos, Size::new(20.0, 20.0), Color::RGBA(255, 0, 0, 255));
             return;
         }
 

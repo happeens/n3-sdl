@@ -29,7 +29,7 @@ pub struct TilesetData {
     imagewidth: Option<u16>,
 
     //TODO handle image set loading
-    // image set
+    // image collection tileset
     tiles: Option<HashMap<String, TileData>>,
 }
 

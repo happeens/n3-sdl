@@ -11,7 +11,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use types::{Size, Point};
-use camera::Camera;
 use context::Context;
 
 use self::layer::{TileLayer, LayerData, ObjectLayer};
@@ -51,7 +50,8 @@ pub struct Tilemap {
 
 impl Tilemap {
     pub fn new(mut ctx: &mut Context) -> Tilemap {
-        let data: TilemapData = super::util::load_data("tilemap-small-0.json").unwrap();
+        use util::load_data;
+        let data: TilemapData = load_data("tilemap-small-0.json").unwrap();
         let tilesize = Size::new(data.tilewidth, data.tileheight);
         let mut entity_layer = 0;
         if let Some(props) = data.properties {
@@ -71,16 +71,15 @@ impl Tilemap {
         let mut fg_layers = Vec::new();
         let mut object_layers = Vec::new();
 
-        let mut current = 0;
+        let mut parsing_background = true;
         for tl in data.layers.iter() {
-            current += 1;
-
             if tl.is_object_layer() {
+                if tl.name == "entities" { parsing_background = false; }
                 object_layers.push(ObjectLayer::new(&tl));
                 continue;
             }
 
-            if current < entity_layer {
+            if parsing_background {
                 bg_layers.push(TileLayer::new(&tl, &tilesets, &tilesize));
                 continue;
             }

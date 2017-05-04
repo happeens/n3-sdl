@@ -35,7 +35,7 @@
   </data>
  </layer>
  <objectgroup name="entities">
-  <object id="1" gid="817" x="76" y="238" width="79" height="108"/>
+  <object id="1" gid="817" x="64.5" y="260.5" width="79" height="108"/>
   <object id="3" gid="818" x="205.5" y="64.5" width="16" height="27"/>
  </objectgroup>
  <layer name="terrain-fg0" width="20" height="20">

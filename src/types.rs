@@ -57,7 +57,7 @@ pub enum Direction {
 }
 
 pub fn to_sdl_rect(p: Point, s: Size) -> SdlRect {
-    SdlRect::new(p.x as i32, p.y as i32, s.w as u32, s.h as u32)
+    SdlRect::new(p.x.floor() as i32, p.y.floor() as i32, s.w.floor() as u32, s.h.floor() as u32)
 }
 
 #[derive(PartialEq, Eq, Debug, Hash, Copy, Clone)]

@@ -11,7 +11,7 @@ use types::to_sdl_rect;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TileData {
-    image: String
+    pub image: String
 }
 
 pub struct Tile {
@@ -28,17 +28,17 @@ impl Tile {
         let mut tileset_id = 0;
 
         for (i, ts) in tilesets.iter().enumerate() {
-            if ts.get_firstgid() <= gid { continue; }
-            tileset_id = i - 1;
-            break;
+            if gid >= ts.firstgid && gid < ts.firstgid + ts.tilecount {
+                tileset_id = i;
+            }
         }
 
         let tileset = &tilesets[tileset_id];
-        let gid = gid - tileset.get_firstgid();
+        let gid = gid - tileset.firstgid;
         let (mut x, mut y) = (0.0, 0.0); 
         if gid != 0 {
-            let size = tileset.get_tilesize();
-            let cols = tileset.get_columns();
+            let size = tileset.tilesize;
+            let cols = tileset.columns;
 
             let offset = gid % cols;
             x = offset as f64 * size.w;
@@ -52,8 +52,8 @@ impl Tile {
             pos: pos,
             size: size,
             src: src,
-            src_size: tileset.get_tilesize(),
-            tex: tileset.clone_tex(),
+            src_size: tileset.tilesize,
+            tex: tileset.get_tex(),
         })
     }
 

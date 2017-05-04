@@ -1,6 +1,7 @@
 use types::{Vec2, Size, Point};
+use cgmath::EuclideanSpace;
 
-const THRESHOLD: f64 = 0.3;
+const THRESHOLD: f64 = 0.1;
 
 pub struct Camera {
     pos: Point,
@@ -32,7 +33,7 @@ impl Camera {
     }
 
     pub fn update(&mut self, dt: f64) {
-        let target = self.target - self.screen.to_point() * 0.5;
+        let target = self.target + (self.screen.to_point() * -0.5).to_vec();
         let dist_x = target.x - self.pos.x;
         let dist_y = target.y - self.pos.y;
         let mut next_pos = self.pos + Vec2::new(dist_x, dist_y) * self.speed * dt;

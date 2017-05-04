@@ -14,7 +14,7 @@ use types::{Size, Point};
 use context::Context;
 
 use self::layer::{TileLayer, LayerData, ObjectLayer};
-use self::tileset::{Tileset, TilesetData};
+use self::tileset::{Tileset, TilesetData, Imageset};
 use self::tile::Tile;
 
 use types::RenderInfo;
@@ -48,6 +48,7 @@ pub struct Tilemap {
     fg_layers: Vec<TileLayer>,
     object_layers: Vec<ObjectLayer>,
     tilesets: Vec<Tileset>,
+    imagesets: Vec<Imageset>
 }
 
 impl Tilemap {
@@ -61,8 +62,10 @@ impl Tilemap {
         }
 
         let mut tilesets = Vec::new();
+        let mut imagesets = Vec::new();
         for td in &data.tilesets {
             if td.is_image_set() {
+                imagesets.push(Imageset::new(&td, ctx));
                 continue;
             }
 
@@ -77,7 +80,7 @@ impl Tilemap {
         for tl in data.layers.iter() {
             if tl.is_object_layer() {
                 if tl.name == "entities" { parsing_background = false; }
-                object_layers.push(ObjectLayer::new(&tl));
+                object_layers.push(ObjectLayer::new(&tl, &imagesets));
                 continue;
             }
 
@@ -97,6 +100,7 @@ impl Tilemap {
             fg_layers: fg_layers,
             object_layers: object_layers,
             tilesets: tilesets,
+            imagesets: imagesets
         }
     }
 

@@ -19,7 +19,7 @@ pub struct TilesetData {
     margin: u16,
     name: String,
     spacing: u16,
-    tilecount: u16,
+    tilecount: u32,
     tileheight: u16,
     tilewidth: u16,
 
@@ -40,9 +40,10 @@ impl TilesetData {
 }
 
 pub struct Tileset {
-    firstgid: u32,
-    tilesize: Size,
-    columns: u32,
+    pub firstgid: u32,
+    pub tilecount: u32,
+    pub tilesize: Size,
+    pub columns: u32,
     tex: Rc<RefCell<Texture>>,
 }
 
@@ -50,25 +51,43 @@ impl Tileset {
     pub fn new(data: &TilesetData, ctx: &mut Context) -> Tileset {
         Tileset {
             firstgid: data.firstgid,
+            tilecount: data.tilecount,
             tilesize: Size::new(data.tilewidth as f64, data.tileheight as f64),
             columns: data.columns,
             tex: ctx.load_texture(data.image.as_ref().unwrap())
         }
     }
-
-    pub fn get_firstgid(&self) -> u32 {
-        self.firstgid
-    }
-
-    pub fn get_tilesize(&self) -> Size {
-        self.tilesize
-    }
-
-    pub fn get_columns(&self) -> u32 {
-        self.columns
-    }
     
-    pub fn clone_tex(&self) -> Rc<RefCell<Texture>> {
+    pub fn get_tex(&self) -> Rc<RefCell<Texture>> {
         self.tex.clone()
+    }
+}
+
+pub struct Imageset {
+    pub firstgid: u32,
+    pub tilecount: u32,
+    images: HashMap<String, Rc<RefCell<Texture>>>,
+}
+
+impl Imageset {
+    pub fn new(data: &TilesetData, ctx: &mut Context) -> Imageset {
+        let mut images = HashMap::new();
+        for (name, tile_data) in data.tiles.as_ref().unwrap() {
+            images.insert(name.to_owned(), ctx.load_texture(&tile_data.image));
+        }
+
+        Imageset {
+            firstgid: data.firstgid,
+            tilecount: data.tilecount,
+            images: images
+        }
+    }
+
+    pub fn get_tex_for_gid(&self, gid: u32) -> Option<Rc<RefCell<Texture>>> {
+        let gid = gid - self.firstgid;
+        match self.images.get(&gid.to_string()) {
+            Some(image) => Some(image.clone()),
+            None => None
+        }
     }
 }

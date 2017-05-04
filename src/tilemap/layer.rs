@@ -1,4 +1,4 @@
-use super::tileset::Tileset;
+use super::tileset::{Tileset, Imageset};
 use super::tile::Tile;
 use super::object::{ObjectData, TileObject};
 
@@ -113,11 +113,13 @@ pub struct ObjectLayer {
 }
 
 impl ObjectLayer {
-    pub fn new(data: &LayerData) -> ObjectLayer {
+    pub fn new(data: &LayerData, imagesets: &Vec<Imageset>) -> ObjectLayer {
         let mut objects = Vec::new();
 
         for od in data.objects.as_ref().unwrap().iter() {
-            objects.push(TileObject::new(od));
+            if let Some(o) = TileObject::new(od, imagesets) {
+                objects.push(o);
+            }
         }
 
         ObjectLayer {

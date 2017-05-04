@@ -11,7 +11,7 @@ use sdl2::render::{Texture, Renderer};
 
 use types::{Point, Size, RenderInfo};
 use types::to_sdl_rect;
-use camera::Camera;
+use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SpriteData {
@@ -40,13 +40,9 @@ impl Sprite {
         }
     }
 
-    pub fn get_render_info(&self, pos: Point) -> RenderInfo {
-        RenderInfo::Texture {
-            pos: pos,
-            size: self.size,
-            src: self.src,
-            src_size: self.src_size,
-            tex: self.tex.clone()
-        }
+    pub fn draw(&self, pos: Point, ctx: &mut Context) {
+        ctx.render(RenderInfo::texture(pos, self.size,
+                                       self.src, self.src_size,
+                                       pos.y, self.tex.clone()));
     }
 }

@@ -20,7 +20,7 @@ mod sprite;
 mod animation;
 mod state;
 
-mod entities;
+mod entity;
 mod camera;
 mod tilemap;
 

@@ -17,6 +17,8 @@ use self::layer::{TileLayer, LayerData, ObjectLayer};
 use self::tileset::{Tileset, TilesetData};
 use self::tile::Tile;
 
+use types::RenderInfo;
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilemapData {
     height: u16,
@@ -98,15 +100,10 @@ impl Tilemap {
         }
     }
 
-    pub fn draw_fg(&self, mut ctx: &mut Context) {
-        for layer in self.fg_layers.iter() {
-            layer.draw(ctx);
-        }
-    }
-
-    pub fn draw_bg(&self, mut ctx: &mut Context) {
-        for layer in self.bg_layers.iter() {
-            layer.draw(ctx);
-        }
+    pub fn draw(&self, mut ctx: &mut Context) {
+        //TODO calculate z values according to map size
+        for layer in &self.bg_layers { layer.draw(-10000.0, ctx); }
+        for layer in &self.fg_layers { layer.draw(10000.0, ctx); }
+        for object_layer in &self.object_layers { object_layer.draw(ctx); }
     }
 }

@@ -1,11 +1,11 @@
 use super::tileset::Tileset;
 use super::tile::Tile;
-use super::object::ObjectData;
+use super::object::{ObjectData, TileObject};
 
 use sdl2::render::{Texture, Renderer};
 use sdl2::image::LoadTexture;
 
-use types::{Size, Point};
+use types::{Size, Point, RenderInfo};
 use camera::Camera;
 use context::Context;
 
@@ -96,27 +96,43 @@ impl TileLayer {
         }
     }
 
-    pub fn draw(&self, ctx: &mut Context) {
-        for tile in self.tiles.iter() {
-            ctx.render(&tile.get_render_info());
+    pub fn draw(&self, z: f64, ctx: &mut Context) {
+        for tile in &self.tiles {
+            tile.draw(z, ctx);
         }
     }
 }
 
 pub struct ObjectLayer {
+    name: String,
     width: u16,
     height: u16,
     opacity: f64,
     visible: bool,
+    objects: Vec<TileObject>,
 }
 
 impl ObjectLayer {
     pub fn new(data: &LayerData) -> ObjectLayer {
+        let mut objects = Vec::new();
+
+        for od in data.objects.as_ref().unwrap().iter() {
+            objects.push(TileObject::new(od));
+        }
+
         ObjectLayer {
+            name: data.name.to_owned(),
             width: data.width,
             height: data.height,
             opacity: data.opacity,
-            visible: data.visible
+            visible: data.visible,
+            objects: objects
+        }
+    }
+
+    pub fn draw(&self, ctx: &mut Context) {
+        for object in &self.objects {
+            object.draw(ctx);
         }
     }
 }

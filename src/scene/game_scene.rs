@@ -9,11 +9,14 @@ use sdl2::keyboard::Keycode::*;
 use context::Context;
 use scene::Scene;
 
+use std::boxed::Box;
+use std::cell::Cell;
+
 use tilemap::Tilemap;
 
-use types::{KeyAction, Size, Point, Vec2, Direction};
+use types::{KeyAction, Size, Point, Vec2, Direction, RenderInfo};
 
-use entities::{Player, PlayerData};
+use entity::{Player, PlayerData};
 
 pub struct GameScene {
     map: Tilemap,
@@ -33,13 +36,11 @@ impl GameScene {
 
         GameScene {
             map: map,
-            player: player
+            player: player,
         }
     }
 
     pub fn try_move_player(&mut self, v: Vec2, dt: f64) {
-        let mut v = v;
-
         // finding next player position for collision
         // let next_pos = self.player.next_pos(dt, v);
         // let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
@@ -79,12 +80,11 @@ impl Scene for GameScene {
 
         let player_pos = self.player.get_pos();
         ctx.set_camera_target(player_pos);
-        self.player.update(dt);
+        self.player.update(ctx, dt);
     }
 
     fn draw(&self, mut ctx: &mut Context) {
-        self.map.draw_bg(ctx);
         self.player.draw(ctx);
-        self.map.draw_fg(ctx);
+        self.map.draw(ctx);
     }
 }

@@ -45,36 +45,6 @@ impl Player {
         }
     }
 
-    pub fn update(&mut self, dt: f64) {
-        let vel = self.vel;
-        self.pos = self.next_pos(dt, vel);
-
-        if self.anims.anim_running() && !self.is_moving() {
-            self.anims.stop_anim();
-        }
-
-        if self.is_moving() {
-            match self.facing {
-                Direction::Up => self.run_anim("walk-up"),
-                Direction::Down => self.run_anim("walk-down"),
-                Direction::Left => self.run_anim("walk-left"),
-                Direction::Right => self.run_anim("walk-right"),
-                _ => {}
-            }
-        }
-
-        self.anims.update(dt);
-    }
-
-    pub fn draw(&self, mut ctx: &mut Context) {
-        let mut index = self.states.current();
-        if self.anims.anim_running() {
-            index = self.anims.current();
-        }
-
-        self.sprites.draw(index, self.pos, ctx);
-    }
-
     pub fn set_facing(&mut self, dir: Direction) {
         self.facing = dir;
 
@@ -104,5 +74,35 @@ impl Player {
 
     pub fn is_moving(&self) -> bool {
         self.vel.y != 0.0 || self.vel.x != 0.0
+    }
+
+    pub fn update(&mut self, ctx: &mut Context, dt: f64) {
+        let vel = self.vel;
+        self.pos = self.next_pos(dt, vel);
+
+        if self.anims.anim_running() && !self.is_moving() {
+            self.anims.stop_anim();
+        }
+
+        if self.is_moving() {
+            match self.facing {
+                Direction::Up => self.run_anim("walk-up"),
+                Direction::Down => self.run_anim("walk-down"),
+                Direction::Left => self.run_anim("walk-left"),
+                Direction::Right => self.run_anim("walk-right"),
+                _ => {}
+            }
+        }
+
+        self.anims.update(dt);
+    }
+
+    pub fn draw(&self, mut ctx: &mut Context) {
+        let mut index = self.states.current();
+        if self.anims.anim_running() {
+            index = self.anims.current();
+        }
+
+        self.sprites.draw(index, self.pos, ctx);
     }
 }

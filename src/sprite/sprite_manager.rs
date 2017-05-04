@@ -39,14 +39,11 @@ impl SpriteManager {
         if index > self.sprites.len() {
             println!("invalid frame for player: {}", index);
 
-            ctx.render(&RenderInfo::Rect {
-                pos: pos,
-                size: Size::new(20.0, 20.0),
-                color: Color::RGB(255, 0, 0)
-            });
+            ctx.render(RenderInfo::rect(pos, Size::new(20.0, 20.0),
+                                        pos.y, Color::RGB(255, 0, 0)));
             return;
         }
 
-        ctx.render(&self.sprites[index].get_render_info(pos));
+        self.sprites[index].draw(pos, ctx);
     }
 }

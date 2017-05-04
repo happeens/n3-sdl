@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use super::tileset::Tileset;
 
-use camera::Camera;
+use context::Context;
 use types::{Point, Size, RenderInfo};
 use types::to_sdl_rect;
 
@@ -19,8 +19,6 @@ pub struct Tile {
     size: Size,
     src: Point,
     src_size: Size,
-    //TODO figure out if this has a performance impact
-    //     or if there's a better way to do it in general
     tex: Rc<RefCell<Texture>>,
 }
 
@@ -59,13 +57,9 @@ impl Tile {
         })
     }
 
-    pub fn get_render_info(&self) -> RenderInfo {
-        RenderInfo::Texture {
-            pos: self.pos,
-            size: self.size,
-            src: self.src,
-            src_size: self.src_size,
-            tex: self.tex.clone()
-        }
+    pub fn draw(&self, z: f64, ctx: &mut Context) {
+        ctx.render(RenderInfo::texture(self.pos, self.size,
+                                       self.src, self.src_size,
+                                       z, self.tex.clone()));
     }
 }

@@ -1,5 +1,6 @@
 use time::{Duration, PreciseTime};
 use std::cmp;
+use std::cmp::Ordering;
 use std::thread::sleep;
 
 use sdl2::EventPump as SdlEvents;
@@ -20,7 +21,7 @@ use scene::Scene;
 use camera::Camera;
 use sprite::SpriteCache;
 
-use types::{KeyAction, Point, Size, RenderInfo, Color};
+use types::{KeyAction, Point, Size, RenderInfo, Renderable, Color};
 use types::to_sdl_rect;
 
 const CAMERA_SPEED: f64 = 2.0;
@@ -37,6 +38,7 @@ pub struct Context<'renderer> {
     sprite_cache: SpriteCache,
     camera: Camera,
     held_keys: Vec<KeyAction>,
+    render_buffer: Vec<RenderInfo>
 }
 
 impl<'renderer> Context<'renderer> {
@@ -60,7 +62,8 @@ impl<'renderer> Context<'renderer> {
             renderer: window.renderer().accelerated().build().unwrap(),
             sprite_cache: sc,
             camera: c,
-            held_keys: Vec::new()
+            held_keys: Vec::new(),
+            render_buffer: Vec::new()
         }
     }
 
@@ -89,6 +92,7 @@ impl<'renderer> Context<'renderer> {
             self.renderer.set_draw_color(Color::RGB(0, 0, 0));
             self.renderer.clear();
             s.draw(self);
+            self.present();
             self.renderer.present();
 
             // limit to 60 fps
@@ -126,30 +130,33 @@ impl<'renderer> Context<'renderer> {
         self.camera.set_target(t);
     }
 
-    pub fn render(&mut self, r: &RenderInfo) {
-        use std::ops::DerefMut;
-        match *r {
-            RenderInfo::Texture {
-                pos,
-                size,
-                src,
-                src_size,
-                ref tex } => self.copy_texture(pos, size, src, src_size, tex.borrow_mut().deref_mut()),
-            RenderInfo::Rect { pos, size, color } => self.render_rect(pos, size, color),
+    pub fn render(&mut self, r: RenderInfo) {
+        self.render_buffer.push(r);
+    }
+
+    fn present(&mut self) {
+        self.render_buffer.sort_by(|lhs, rhs| match lhs.z.partial_cmp(&rhs.z) {
+            Some(o) => o,
+            None => Ordering::Equal,
+        });
+
+        for r in &self.render_buffer {
+            use std::ops::DerefMut;
+            match r.renderable {
+                Renderable::Texture { src, src_size, ref tex } => {
+                    copy_texture(&mut self.renderer,
+                                 &self.camera,
+                                 r.pos, r.size,
+                                 src, src_size,
+                                 tex.borrow_mut().deref_mut());
+                },
+                Renderable::Rect { color } => render_rect(&mut self.renderer,
+                                                          &self.camera,
+                                                          r.pos, r.size, color),
+            }
         }
-    }
 
-    fn copy_texture(&mut self, pos: Point, size: Size, src: Point, src_size: Size, tex: &mut Texture) {
-        let dest = pos + (self.camera.as_vec() * -1.0);
-        let _ = self.renderer.copy(tex,
-                                   Some(to_sdl_rect(src, src_size)),
-                                   Some(to_sdl_rect(dest, size)));
-    }
-
-    fn render_rect(&mut self, pos: Point, size: Size, color: Color) {
-        let dest = pos + (self.camera.as_vec() * -1.0);
-        self.renderer.set_draw_color(color);
-        let _ = self.renderer.fill_rect(Some(to_sdl_rect(dest, size)));
+        self.render_buffer.clear();
     }
 
     fn handle_events(&mut self) {
@@ -183,4 +190,17 @@ impl<'renderer> Context<'renderer> {
             }
         }
     }
+}
+
+fn copy_texture(r: &mut SdlRenderer, c: &Camera, pos: Point, size: Size, src: Point, src_size: Size, tex: &mut Texture) {
+    let dest = pos + (c.as_vec() * -1.0);
+    let _ = r.copy(tex,
+                   Some(to_sdl_rect(src, src_size)),
+                   Some(to_sdl_rect(dest, size)));
+}
+
+fn render_rect(r: &mut SdlRenderer, c: &Camera, pos: Point, size: Size, color: Color) {
+    let dest = pos + (c.as_vec() * -1.0);
+    r.set_draw_color(color);
+    let _ = r.fill_rect(Some(to_sdl_rect(dest, size)));
 }

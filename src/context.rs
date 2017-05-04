@@ -69,36 +69,37 @@ impl<'renderer> Context<'renderer> {
         self.running = true;
         let mut current_time = PreciseTime::now();
         let step = Duration::nanoseconds(STEP_NS.floor() as i64);
+        let dt = step.num_nanoseconds().unwrap() as f64 / NANOS_IN_SECOND;
+        let max_frame_time = Duration::seconds(1);
+        let mut accumulator = Duration::zero();
 
         while self.running {
             let new_time = PreciseTime::now();
             let mut frame_time = current_time.to(new_time);
             current_time = new_time;
 
+            if frame_time > max_frame_time {
+                frame_time = max_frame_time;
+            }
+            
+            accumulator = accumulator + frame_time;
+
             // do an update for every frame we rendered
-            while frame_time > Duration::zero() {
-                let dt = cmp::min(frame_time, step);
-                frame_time = frame_time - dt;
+            while accumulator >= step {
+                accumulator = accumulator - step;
 
                 // convert to seconds and update game state
-                let dt = dt.num_nanoseconds().unwrap() as f64 / NANOS_IN_SECOND;
+                print!("dt: {}\t\t\r", dt);
                 self.handle_events();
                 s.update(self, dt);
                 self.camera.update(dt);
             }
 
-            self.renderer.set_draw_color(Color::RGB(0, 0, 0));
+            self.renderer.set_draw_color(Color::RGB(255, 255, 255));
             self.renderer.clear();
             s.draw(self);
             self.present();
             self.renderer.present();
-
-            // limit to 60 fps
-            let render_time = current_time.to(PreciseTime::now());
-            let difference = step - render_time;
-            if difference > Duration::zero() {
-                sleep(difference.to_std().unwrap());
-            }
         }
     }
 

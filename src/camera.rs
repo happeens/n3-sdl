@@ -1,7 +1,7 @@
 use types::{Vec2, Size, Point};
 use cgmath::EuclideanSpace;
 
-const THRESHOLD: f64 = 0.1;
+const THRESHOLD: f64 = 0.3;
 
 pub struct Camera {
     pos: Point,

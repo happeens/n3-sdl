@@ -1,6 +1,6 @@
 {
     "type": "player",
-    "speed": 130.0,
+    "speed": 150.0,
     "start_state": "idle-down",
     "frames": [
         { "name": "female0-0-0" },

@@ -1,6 +1,6 @@
 {
     "type": "player",
-    "speed": 130.0,
+    "speed": 3.0,
     "start_state": "idle-down",
     "frames": [
         { "name": "player-0-0" },

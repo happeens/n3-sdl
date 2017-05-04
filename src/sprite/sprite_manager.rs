@@ -1,7 +1,5 @@
 use sprite::{Sprite, SpriteData, SpriteCache};
 use types::{Point, Size, Color, RenderInfo};
-use sdl2::render::Renderer;
-use camera::Camera;
 use context::Context;
 
 pub struct SpriteManager {

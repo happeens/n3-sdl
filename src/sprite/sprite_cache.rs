@@ -1,13 +1,11 @@
-use sdl2::render::{Renderer, Texture};
-use sdl2::image::LoadTexture;
-use sdl2::rect::Rect;
-
 use std::fs::File;
 use std::path::Path;
 use std::io::prelude::*;
-
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use sdl2::render::Renderer;
+use sdl2::image::LoadTexture;
 
 use types::{Size, Point};
 

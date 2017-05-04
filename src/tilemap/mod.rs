@@ -1,23 +1,14 @@
+use types::Size;
+use context::Context;
+
+use self::layer::{TileLayer, LayerData, ObjectLayer};
+use self::tileset::{Tileset, TilesetData, Imageset};
+
 mod tileset;
 
 mod layer;
 mod tile;
 mod object;
-
-use sdl2::render::{Texture, Renderer};
-use sdl2::image::LoadTexture;
-
-use std::cell::RefCell;
-use std::rc::Rc;
-
-use types::{Size, Point};
-use context::Context;
-
-use self::layer::{TileLayer, LayerData, ObjectLayer};
-use self::tileset::{Tileset, TilesetData, Imageset};
-use self::tile::Tile;
-
-use types::RenderInfo;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilemapData {
@@ -30,25 +21,17 @@ pub struct TilemapData {
     tilewidth: f64,
     version: u16,
     tilesets: Vec<TilesetData>,
-    layers: Vec<LayerData>,
-    properties: Option<TilemapConfigData>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct TilemapConfigData {
-    #[serde(rename="entitylayer")]
-    entity_layer: u16
+    layers: Vec<LayerData>
 }
 
 pub struct Tilemap {
-    width: u16,
-    height: u16,
-    tilesize: Size,
+    _width: u16,
+    _height: u16,
     bg_layers: Vec<TileLayer>,
     fg_layers: Vec<TileLayer>,
     object_layers: Vec<ObjectLayer>,
-    tilesets: Vec<Tileset>,
-    imagesets: Vec<Imageset>
+    _tilesets: Vec<Tileset>,
+    _imagesets: Vec<Imageset>
 }
 
 impl Tilemap {
@@ -56,10 +39,6 @@ impl Tilemap {
         use util::load_data;
         let data: TilemapData = load_data("tilemap-small-0.json").unwrap();
         let tilesize = Size::new(data.tilewidth, data.tileheight);
-        let mut entity_layer = 0;
-        if let Some(props) = data.properties {
-            entity_layer = props.entity_layer;
-        }
 
         let mut tilesets = Vec::new();
         let mut imagesets = Vec::new();
@@ -93,14 +72,13 @@ impl Tilemap {
         }
 
         Tilemap {
-            width: data.width,
-            height: data.height,
-            tilesize: tilesize,
+            _width: data.width,
+            _height: data.height,
             bg_layers: bg_layers,
             fg_layers: fg_layers,
             object_layers: object_layers,
-            tilesets: tilesets,
-            imagesets: imagesets
+            _tilesets: tilesets,
+            _imagesets: imagesets
         }
     }
 

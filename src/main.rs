@@ -10,8 +10,6 @@ extern crate serde_json;
 extern crate base64;
 extern crate byteorder;
 
-use sdl2::image::INIT_PNG;
-
 mod types;
 mod context;
 mod scene;

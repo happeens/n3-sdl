@@ -4,13 +4,10 @@ pub type SpriteCache = sprite_cache::SpriteCache;
 mod sprite_manager;
 pub type SpriteManager = sprite_manager::SpriteManager;
 
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use std::rc::Rc;
 
-use sdl2::render::{Texture, Renderer};
-
-use types::{Point, Size, RenderInfo};
-use types::to_sdl_rect;
+use types::{Point, Size, RenderInfo, Texture};
 use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]

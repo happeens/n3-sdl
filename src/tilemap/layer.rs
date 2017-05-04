@@ -1,13 +1,9 @@
+use types::{Point, Size};
+use context::Context;
+
 use super::tileset::{Tileset, Imageset};
 use super::tile::Tile;
 use super::object::{ObjectData, TileObject};
-
-use sdl2::render::{Texture, Renderer};
-use sdl2::image::LoadTexture;
-
-use types::{Size, Point, RenderInfo};
-use camera::Camera;
-use context::Context;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct LayerData {
@@ -38,12 +34,10 @@ impl LayerData {
     }
 }
 
+//TODO implement opacity
 pub struct TileLayer {
-    width: u16,
-    height: u16,
-    opacity: f64,
+    _opacity: f64,
     visible: bool,
-    tilesize: Size,
     tiles: Vec<Tile>,
 }
 
@@ -87,27 +81,23 @@ impl TileLayer {
         }
 
         TileLayer {
-            width: data.width,
-            height: data.height,
-            opacity: data.opacity,
+            _opacity: data.opacity,
             visible: data.visible,
-            tilesize: tilesize.clone(),
             tiles: tiles
         }
     }
 
     pub fn draw(&self, z: f64, ctx: &mut Context) {
+        if !self.visible { return; }
         for tile in &self.tiles {
             tile.draw(z, ctx);
         }
     }
 }
 
+//TODO implement opacity
 pub struct ObjectLayer {
-    name: String,
-    width: u16,
-    height: u16,
-    opacity: f64,
+    _opacity: f64,
     visible: bool,
     objects: Vec<TileObject>,
 }
@@ -123,16 +113,14 @@ impl ObjectLayer {
         }
 
         ObjectLayer {
-            name: data.name.to_owned(),
-            width: data.width,
-            height: data.height,
-            opacity: data.opacity,
+            _opacity: data.opacity,
             visible: data.visible,
             objects: objects
         }
     }
 
     pub fn draw(&self, ctx: &mut Context) {
+        if !self.visible { return; }
         for object in &self.objects {
             object.draw(ctx);
         }

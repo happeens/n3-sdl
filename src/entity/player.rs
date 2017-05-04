@@ -1,11 +1,9 @@
-use animation::{AnimManager, AnimData};
-use state::{StateData, StateManager};
-use sprite::{Sprite, SpriteData, SpriteManager, SpriteCache};
 use types::{Point, Vec2, Direction};
-
-use camera::Camera;
-use sdl2::render::Renderer;
 use context::Context;
+
+use animation::{AnimManager, AnimData};
+use sprite::{SpriteData, SpriteManager, SpriteCache};
+use state::{StateData, StateManager};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlayerData {
@@ -76,7 +74,7 @@ impl Player {
         self.vel.y != 0.0 || self.vel.x != 0.0
     }
 
-    pub fn update(&mut self, ctx: &mut Context, dt: f64) {
+    pub fn update(&mut self, dt: f64) {
         let vel = self.vel;
         self.pos = self.next_pos(dt, vel);
 
@@ -89,8 +87,7 @@ impl Player {
                 Direction::Up => self.run_anim("walk-up"),
                 Direction::Down => self.run_anim("walk-down"),
                 Direction::Left => self.run_anim("walk-left"),
-                Direction::Right => self.run_anim("walk-right"),
-                _ => {}
+                Direction::Right => self.run_anim("walk-right")
             }
         }
 

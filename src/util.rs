@@ -8,7 +8,7 @@ pub fn load_data<T>(path: &str) -> Result<T, String>
     where T: Deserialize {
     let file = File::open(Path::new(&format!("assets/{}", path)));
     match file {
-        Ok(mut file) => parse_json(file),
+        Ok(file) => parse_json(file),
         Err(err) => Err(format!("Error while loading file {}: {}", path, err))
     }
 }

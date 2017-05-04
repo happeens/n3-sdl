@@ -1,22 +1,8 @@
-use sdl2::EventPump as SdlEvents;
-use sdl2::render::Renderer;
-use sdl2::rect::Rect;
-use sdl2::pixels::Color;
-
-use sdl2::event::Event::*;
-use sdl2::keyboard::Keycode::*;
-
-use context::Context;
 use scene::Scene;
-
-use std::boxed::Box;
-use std::cell::Cell;
-
 use tilemap::Tilemap;
-
-use types::{KeyAction, Size, Point, Vec2, Direction, RenderInfo};
-
 use entity::{Player, PlayerData};
+use types::{KeyAction, Point, Vec2, Direction};
+use context::Context;
 
 pub struct GameScene {
     map: Tilemap,
@@ -32,7 +18,7 @@ impl GameScene {
 
         let start_pos = Point::new(0.0, 0.0);
         let player_data: PlayerData = ::util::load_data("player-female0.json").unwrap();
-        let mut player = Player::new(&player_data, start_pos, ctx.get_sprite_cache());
+        let player = Player::new(&player_data, start_pos, ctx.get_sprite_cache());
 
         GameScene {
             map: map,
@@ -40,7 +26,7 @@ impl GameScene {
         }
     }
 
-    pub fn try_move_player(&mut self, v: Vec2, dt: f64) {
+    pub fn try_move_player(&mut self, v: Vec2) {
         // finding next player position for collision
         // let next_pos = self.player.next_pos(dt, v);
         // let new_x = self.player.next_pos(dt, Point::new(v.x(), 0.0));
@@ -68,7 +54,7 @@ impl Scene for GameScene {
             move_intention = move_intention.normalize_to(1.0)
         }
 
-        self.try_move_player(move_intention, dt);
+        self.try_move_player(move_intention);
 
         match ctx.last_key() {
             Some(&KeyAction::Down) => self.player.set_facing(Direction::Down),
@@ -80,7 +66,7 @@ impl Scene for GameScene {
 
         let player_pos = self.player.get_pos();
         ctx.set_camera_target(player_pos);
-        self.player.update(ctx, dt);
+        self.player.update(dt);
     }
 
     fn draw(&self, mut ctx: &mut Context) {

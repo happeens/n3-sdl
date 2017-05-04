@@ -5,14 +5,12 @@ use std::thread::sleep;
 
 use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer as SdlRenderer;
-use sdl2::render::Texture;
 use sdl2::image::{INIT_PNG, LoadTexture};
 
 use std::path::Path;
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::cell::RefMut;
 
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
@@ -21,7 +19,7 @@ use scene::Scene;
 use camera::Camera;
 use sprite::SpriteCache;
 
-use types::{KeyAction, Point, Size, RenderInfo, Renderable, Color};
+use types::{KeyAction, Point, Size, RenderInfo, Renderable, Color, Texture};
 use types::to_sdl_rect;
 
 const CAMERA_SPEED: f64 = 2.0;
@@ -51,7 +49,7 @@ impl<'renderer> Context<'renderer> {
             .position_centered().opengl()
             .build().unwrap();
 
-        let mut sc = SpriteCache::new();
+        let sc = SpriteCache::new();
         let c = Camera::new(Point::new(0.0, 0.0),
                             Size::new(WINDOW_W as f64, WINDOW_H as f64),
                             CAMERA_SPEED);

@@ -1,4 +1,4 @@
-use sprite::{Sprite, SpriteManager};
+use sprite::SpriteManager;
 use animation::{Animation, AnimFrame, AnimData};
 
 pub struct AnimManager {

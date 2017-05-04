@@ -1,8 +1,9 @@
-use types::{Point, Size, RenderInfo, Color};
-use sdl2::render::Texture;
-use context::Context;
 use std::rc::Rc;
 use std::cell::RefCell;
+
+use types::{Point, Size, RenderInfo, Texture};
+use context::Context;
+
 use super::tileset::Imageset;
 
 #[derive(Serialize, Deserialize, Debug)]

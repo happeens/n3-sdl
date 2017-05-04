@@ -24,10 +24,6 @@ impl Camera {
         self.target = target;
     } 
 
-    pub fn get_pos(&self) -> Point {
-        self.pos
-    }
-
     pub fn as_vec(&self) -> Vec2 {
         Vec2::new(self.pos.x, self.pos.y)
     }

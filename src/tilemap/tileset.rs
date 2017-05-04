@@ -1,16 +1,11 @@
-use sdl2::render::{Texture, Renderer};
-use sdl2::image::LoadTexture;
-
-use super::tile::TileData;
-
 use std::collections::HashMap;
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use context::Context;
+use types::{Size, Texture};
 
-use std::path::Path;
-use types::{Size, Point};
+use super::tile::TileData;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TilesetData {

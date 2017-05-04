@@ -1,5 +1,3 @@
-use sprite::Sprite;
-
 mod anim_manager;
 pub type AnimManager = anim_manager::AnimManager;
 

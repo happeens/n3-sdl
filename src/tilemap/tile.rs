@@ -1,13 +1,10 @@
-use sdl2::render::{Texture, Renderer};
-
-use std::cell::{RefCell, RefMut};
+use std::cell::RefCell;
 use std::rc::Rc;
 
-use super::tileset::Tileset;
-
+use types::{Point, Size, RenderInfo, Texture};
 use context::Context;
-use types::{Point, Size, RenderInfo};
-use types::to_sdl_rect;
+
+use super::tileset::Tileset;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TileData {

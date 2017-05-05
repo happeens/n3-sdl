@@ -3,7 +3,7 @@ use animation::{Animation, AnimFrame, AnimData};
 
 pub struct AnimManager {
     anims: Vec<Animation>,
-    timer: f64,
+    timer: f32,
     anim_running: bool,
     current_anim: usize,
     current_frame: usize
@@ -36,7 +36,7 @@ impl AnimManager {
         self.anims[self.current_anim].frames[self.current_frame].index
     }
 
-    pub fn update(&mut self, dt: f64) {
+    pub fn update(&mut self, dt: f32) {
         if !self.anim_running {
             return;
         }
@@ -67,7 +67,7 @@ impl AnimManager {
         self.anim_running
     }
 
-    fn advance_anim(&mut self, dt: f64) {
+    fn advance_anim(&mut self, dt: f32) {
         self.timer += dt;
 
         if self.timer > self.get_delay(self.current_anim, self.current_frame) {
@@ -84,7 +84,7 @@ impl AnimManager {
         }
     }
 
-    fn get_delay(&self, anim: usize, frame: usize) -> f64 {
+    fn get_delay(&self, anim: usize, frame: usize) -> f32 {
         self.anims[anim].frames[frame].delay
     }
 

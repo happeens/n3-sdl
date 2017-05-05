@@ -38,9 +38,9 @@ impl Tile {
             let cols = tileset.columns;
 
             let offset = gid % cols;
-            x = offset as f64 * size.w;
+            x = offset as f32 * size.w;
             let row: u32 = gid / cols;
-            y = row as f64 * size.h;
+            y = row as f32 * size.h;
         }
 
         let src = Point::new(x, y);
@@ -54,7 +54,7 @@ impl Tile {
         })
     }
 
-    pub fn draw(&self, z: f64, ctx: &mut Context) {
+    pub fn draw(&self, z: f32, ctx: &mut Context) {
         ctx.render(RenderInfo::texture(self.pos, self.size,
                                        self.src, self.src_size,
                                        z, self.tex.clone()));

@@ -14,7 +14,7 @@ pub struct LayerData {
     pub name: String,
     height: u16,
     width: u16,
-    opacity: f64,
+    opacity: f32,
     visible: bool,
     x: u16,
     y: u16,
@@ -36,7 +36,7 @@ impl LayerData {
 
 //TODO implement opacity
 pub struct TileLayer {
-    _opacity: f64,
+    _opacity: f32,
     visible: bool,
     tiles: Vec<Tile>,
 }
@@ -67,8 +67,8 @@ impl TileLayer {
         for y in 0..data.height {
             for x in 0..data.width {
                 if counter >= fields.len() { break; }
-                let pos = Point::new(x as f64 * tilesize.w,
-                                     y as f64 * tilesize.h);
+                let pos = Point::new(x as f32 * tilesize.w,
+                                     y as f32 * tilesize.h);
 
                 if let Some(tile) = Tile::from_gid(fields[counter],
                                                    &tilesets,
@@ -87,7 +87,7 @@ impl TileLayer {
         }
     }
 
-    pub fn draw(&self, z: f64, ctx: &mut Context) {
+    pub fn draw(&self, z: f32, ctx: &mut Context) {
         if !self.visible { return; }
         for tile in &self.tiles {
             tile.draw(z, ctx);
@@ -97,7 +97,7 @@ impl TileLayer {
 
 //TODO implement opacity
 pub struct ObjectLayer {
-    _opacity: f64,
+    _opacity: f32,
     visible: bool,
     objects: Vec<TileObject>,
 }

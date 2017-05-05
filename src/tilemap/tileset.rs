@@ -47,7 +47,7 @@ impl Tileset {
         Tileset {
             firstgid: data.firstgid,
             tilecount: data.tilecount,
-            tilesize: Size::new(data.tilewidth as f64, data.tileheight as f64),
+            tilesize: Size::new(data.tilewidth as f32, data.tileheight as f32),
             columns: data.columns,
             tex: ctx.load_texture(data.image.as_ref().unwrap())
         }

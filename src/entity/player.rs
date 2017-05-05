@@ -7,7 +7,7 @@ use state::{StateData, StateManager};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct PlayerData {
-    speed: f64,
+    speed: f32,
     start_state: String,
     frames: Vec<SpriteData>,
     states: Vec<StateData>,
@@ -17,7 +17,7 @@ pub struct PlayerData {
 pub struct Player {
     pos: Point,
     vel: Vec2,
-    speed: f64,
+    speed: f32,
     facing: Direction,
     sprites: SpriteManager,
     states: StateManager,
@@ -58,8 +58,8 @@ impl Player {
         self.anims.run(anim);
     }
 
-    pub fn next_pos(&mut self, dt: f64, vel: Vec2) -> Point {
-        self.pos + (vel * dt * self.speed)
+    pub fn next_pos(&self, dt: f32) -> Point {
+        self.pos + (self.vel * dt * self.speed)
     }
 
     pub fn get_pos(&self) -> Point {
@@ -74,9 +74,8 @@ impl Player {
         self.vel.y != 0.0 || self.vel.x != 0.0
     }
 
-    pub fn update(&mut self, dt: f64) {
-        let vel = self.vel;
-        self.pos = self.next_pos(dt, vel);
+    pub fn update(&mut self, dt: f32) {
+        self.pos = self.next_pos(dt);
 
         if self.anims.anim_running() && !self.is_moving() {
             self.anims.stop_anim();
@@ -94,12 +93,13 @@ impl Player {
         self.anims.update(dt);
     }
 
-    pub fn draw(&self, mut ctx: &mut Context) {
+    pub fn draw(&self, mut ctx: &mut Context, a: f32) {
         let mut index = self.states.current();
         if self.anims.anim_running() {
             index = self.anims.current();
         }
 
-        self.sprites.draw(index, self.pos, ctx);
+        let dest = self.next_pos(a);
+        self.sprites.draw(index, dest, ctx);
     }
 }

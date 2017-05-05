@@ -19,7 +19,7 @@ pub struct Animation {
 
 pub struct AnimFrame {
     pub index: usize,
-    pub delay: f64
+    pub delay: f32
 }
 
 impl Animation {
@@ -32,7 +32,7 @@ impl Animation {
 }
 
 impl AnimFrame {
-    pub fn new(index: usize, delay: f64) -> AnimFrame {
+    pub fn new(index: usize, delay: f32) -> AnimFrame {
         AnimFrame {
             index: index,
             delay: delay

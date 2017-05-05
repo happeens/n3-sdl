@@ -1,33 +1,26 @@
-use time::{Duration, PreciseTime};
-use std::cmp;
-use std::cmp::Ordering;
-use std::thread::sleep;
+use std::path::Path;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use sdl2::EventPump as SdlEvents;
 use sdl2::render::Renderer as SdlRenderer;
 use sdl2::image::{INIT_PNG, LoadTexture};
-
-use std::path::Path;
-
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use sdl2::event::Event::*;
 use sdl2::keyboard::Keycode::*;
+
+use time::{Duration, PreciseTime};
 
 use scene::Scene;
 use camera::Camera;
 use sprite::SpriteCache;
+use types::{KeyAction, Point, Size, Vec2, RenderInfo, Renderable, Color, Texture, to_sdl_rect};
 
-use types::{KeyAction, Point, Size, RenderInfo, Renderable, Color, Texture};
-use types::to_sdl_rect;
+const CAMERA_SPEED: f32 = 2.0;
+const WINDOW_W: u32 = 1920;
+const WINDOW_H: u32 = 1200;
 
-const CAMERA_SPEED: f64 = 2.0;
-const WINDOW_W: u32 = 1280;
-const WINDOW_H: u32 = 800;
-
-const NANOS_IN_SECOND: f64 = 1000000000.0;
-const STEP_NS: f64 = NANOS_IN_SECOND / 60.0;
+const NANOS_IN_SECOND: f32 = 1000000000.0;
+const STEP_NS: f32 = NANOS_IN_SECOND / 60.0;
 
 pub struct Context<'renderer> {
     running: bool,
@@ -46,12 +39,12 @@ impl<'renderer> Context<'renderer> {
         let _image_context = super::sdl2::image::init(INIT_PNG).unwrap();
 
         let window = video.window("n3-ctx", WINDOW_W, WINDOW_H)
-            .position_centered().opengl()
+            .fullscreen_desktop()
             .build().unwrap();
 
         let sc = SpriteCache::new();
         let c = Camera::new(Point::new(0.0, 0.0),
-                            Size::new(WINDOW_W as f64, WINDOW_H as f64),
+                            Size::new(WINDOW_W as f32, WINDOW_H as f32),
                             CAMERA_SPEED);
 
         Context {
@@ -69,11 +62,13 @@ impl<'renderer> Context<'renderer> {
         self.running = true;
         let mut current_time = PreciseTime::now();
         let step = Duration::nanoseconds(STEP_NS.floor() as i64);
-        let dt = step.num_nanoseconds().unwrap() as f64 / NANOS_IN_SECOND;
+        let dt = step.num_nanoseconds().unwrap() as f32 / NANOS_IN_SECOND;
         let max_frame_time = Duration::seconds(1);
         let mut accumulator = Duration::zero();
 
         while self.running {
+            self.handle_events();
+
             let new_time = PreciseTime::now();
             let mut frame_time = current_time.to(new_time);
             current_time = new_time;
@@ -84,21 +79,21 @@ impl<'renderer> Context<'renderer> {
             
             accumulator = accumulator + frame_time;
 
-            // do an update for every frame we rendered
             while accumulator >= step {
                 accumulator = accumulator - step;
 
-                // convert to seconds and update game state
-                print!("dt: {}\t\t\r", dt);
-                self.handle_events();
                 s.update(self, dt);
                 self.camera.update(dt);
             }
 
-            self.renderer.set_draw_color(Color::RGB(255, 255, 255));
+            self.renderer.set_draw_color(Color::RGB(0, 0, 0));
             self.renderer.clear();
-            s.draw(self);
-            self.present();
+
+            let a = (current_time.to(PreciseTime::now()).num_nanoseconds().unwrap() as f32 / NANOS_IN_SECOND) / dt;
+
+            s.draw(self, a);
+
+            self.present(a);
             self.renderer.present();
         }
     }
@@ -133,24 +128,22 @@ impl<'renderer> Context<'renderer> {
         self.render_buffer.push(r);
     }
 
-    fn present(&mut self) {
-        self.render_buffer.sort_by(|lhs, rhs| match lhs.z.partial_cmp(&rhs.z) {
-            Some(o) => o,
-            None => Ordering::Equal,
-        });
+    fn present(&mut self, a: f32) {
+        self.render_buffer.sort_by_key(|e| e.z as i32);;
+        let camera_offset = self.camera.next_vec(a);
 
         for r in &self.render_buffer {
             use std::ops::DerefMut;
             match r.renderable {
                 Renderable::Texture { src, src_size, ref tex } => {
                     copy_texture(&mut self.renderer,
-                                 &self.camera,
+                                 camera_offset,
                                  r.pos, r.size,
                                  src, src_size,
                                  tex.borrow_mut().deref_mut());
                 },
                 Renderable::Rect { color } => render_rect(&mut self.renderer,
-                                                          &self.camera,
+                                                          camera_offset,
                                                           r.pos, r.size, color),
             }
         }
@@ -173,6 +166,7 @@ impl<'renderer> Context<'renderer> {
                         Some(A) => self.held_keys.push(KeyAction::Left),
                         Some(S) => self.held_keys.push(KeyAction::Down),
                         Some(D) => self.held_keys.push(KeyAction::Right),
+                        // Some(R) => self.
                         _ => {}
                     }
                 }
@@ -191,15 +185,17 @@ impl<'renderer> Context<'renderer> {
     }
 }
 
-fn copy_texture(r: &mut SdlRenderer, c: &Camera, pos: Point, size: Size, src: Point, src_size: Size, tex: &mut Texture) {
-    let dest = pos + (c.as_vec() * -1.0);
+fn copy_texture(r: &mut SdlRenderer, camera_offset: Vec2, pos: Point, size: Size, src: Point, src_size: Size, tex: &mut Texture) {
+    let dest = pos + camera_offset;
     let _ = r.copy(tex,
-                   Some(to_sdl_rect(src, src_size)),
-                   Some(to_sdl_rect(dest, size)));
+                 Some(to_sdl_rect(src, src_size)),
+                 Some(to_sdl_rect(dest, size)));
 }
 
-fn render_rect(r: &mut SdlRenderer, c: &Camera, pos: Point, size: Size, color: Color) {
-    let dest = pos + (c.as_vec() * -1.0);
+fn render_rect(r: &mut SdlRenderer, camera_offset: Vec2, pos: Point, size: Size, color: Color) {
+    let dest = pos + camera_offset;
     r.set_draw_color(color);
-    let _ = r.fill_rect(Some(to_sdl_rect(dest, size)));
+    let _ =  r.fill_rect(Some(to_sdl_rect(dest, size)));
+    r.set_draw_color(Color::RGB(0, 0, 0));
+    let _ =  r.draw_rect(to_sdl_rect(dest, size));
 }

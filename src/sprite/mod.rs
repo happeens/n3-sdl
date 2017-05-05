@@ -21,7 +21,7 @@ pub struct Sprite {
     size: Size,
     src: Point,
     src_size: Size,
-    scale: f64,
+    scale: f32,
     tex: Rc<RefCell<Texture>>
 }
 

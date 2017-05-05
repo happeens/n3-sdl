@@ -37,7 +37,7 @@ impl GameScene {
 }
 
 impl Scene for GameScene {
-    fn update(&mut self, ctx: &mut Context, dt: f64) {
+    fn update(&mut self, ctx: &mut Context, dt: f32) {
         let mut move_intention = Vec2::new(0.0, 0.0);
 
         for key in ctx.held_keys() {
@@ -69,8 +69,8 @@ impl Scene for GameScene {
         self.player.update(dt);
     }
 
-    fn draw(&self, mut ctx: &mut Context) {
-        self.player.draw(ctx);
+    fn draw(&self, mut ctx: &mut Context, a: f32) {
+        self.player.draw(ctx, a);
         self.map.draw(ctx);
     }
 }

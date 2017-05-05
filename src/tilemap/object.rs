@@ -10,8 +10,8 @@ use super::tileset::Imageset;
 pub struct ObjectData {
     width: u16,
     height: u16,
-    x: f64,
-    y: f64,
+    x: f32,
+    y: f32,
     visible: bool,
     id: u16,
     gid: u32
@@ -43,10 +43,10 @@ impl TileObject {
         let tex_info = tex.borrow().query();
 
         Some(TileObject { 
-            pos: Point::new(data.x, data.y - data.height as f64),
-            size: Size::new(data.width as f64, data.height as f64),
+            pos: Point::new(data.x, data.y - data.height as f32),
+            size: Size::new(data.width as f32, data.height as f32),
             src: Point::new(0.0, 0.0),
-            src_size: Size::new(tex_info.width as f64, tex_info.height as f64),
+            src_size: Size::new(tex_info.width as f32, tex_info.height as f32),
             tex: tex.clone()
         })
     }

@@ -26,14 +26,14 @@ struct SpritesheetData {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct PointData {
-    x: f64,
-    y: f64
+    x: f32,
+    y: f32
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 struct SizeData {
-    width: f64,
-    height: f64
+    width: f32,
+    height: f32
 }
 
 impl SpriteCache {

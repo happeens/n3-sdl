@@ -6,14 +6,14 @@ use sdl2::rect::Rect as SdlRect;
 pub use sdl2::pixels::Color as Color;
 pub use sdl2::render::Texture as Texture;
 
-pub type Point = super::cgmath::Point2<f64>;
-pub type Vec2 = super::cgmath::Vector2<f64>;
+pub type Point = super::cgmath::Point2<f32>;
+pub type Vec2 = super::cgmath::Vector2<f32>;
 
 #[derive(Clone)]
 pub struct RenderInfo {
     pub pos: Point,
     pub size: Size,
-    pub z: f64,
+    pub z: f32,
     pub renderable: Renderable,
 }
 
@@ -28,7 +28,7 @@ pub enum Renderable {
 impl RenderInfo {
     pub fn texture(pos: Point, size: Size,
                    src: Point, src_size: Size,
-                   z: f64, tex: Rc<RefCell<Texture>>) -> RenderInfo {
+                   z: f32, tex: Rc<RefCell<Texture>>) -> RenderInfo {
         RenderInfo {
             pos: pos,
             size: size,
@@ -37,7 +37,7 @@ impl RenderInfo {
         }
     }
 
-    pub fn rect(pos: Point, size: Size, z: f64, color: Color) -> RenderInfo {
+    pub fn rect(pos: Point, size: Size, z: f32, color: Color) -> RenderInfo {
         RenderInfo {
             pos: pos,
             size: size,
@@ -69,12 +69,12 @@ pub enum KeyAction {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Size {
-    pub w: f64,
-    pub h: f64,
+    pub w: f32,
+    pub h: f32,
 }
 
 impl Size {
-    pub fn new(w: f64, h: f64) -> Size {
+    pub fn new(w: f32, h: f32) -> Size {
         Size { w: w, h: h }
     }
 

@@ -17,8 +17,8 @@ pub struct TilemapData {
     nextobjectid: u16,
     orientation: String,
     renderorder: String,
-    tileheight: f64,
-    tilewidth: f64,
+    tileheight: f32,
+    tilewidth: f32,
     version: u16,
     tilesets: Vec<TilesetData>,
     layers: Vec<LayerData>
